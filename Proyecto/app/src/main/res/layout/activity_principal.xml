@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="25dp"
+    tools:context=".Controlador.principalActivity">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:text="My Life Diary"
+        android:textSize="35dp"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/view_img"
+        android:layout_width="240dp"
+        android:layout_height="320dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
+        app:srcCompat="@drawable/fot1" />
+
+    <TextView
+        android:id="@+id/view_ubi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Localización"
+        android:textColor="@color/colorWhite"
+        android:textColorHighlight="@color/colorLogin"
+        android:textColorHint="@color/color_hint"
+        android:textColorLink="@color/colorLogin"
+        android:textCursorDrawable="@color/colorLogin"
+        app:layout_constraintTop_toBottomOf="@+id/view_img"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="140dp" />
+
+    <EditText
+        android:id="@+id/view_des"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:hint="Descripción"
+        android:inputType="textPersonName"
+        app:layout_constraintTop_toBottomOf="@+id/view_ubi"
+        tools:layout_editor_absoluteX="20dp"
+        android:textColor="@color/colorWhite"
+        android:textColorHint="@color/color_hint"
+        android:textColorLink="@color/colorLogin"
+        android:backgroundTint="@color/colorLogin"
+        android:textColorHighlight="@color/colorLogin"
+        android:textCursorDrawable="@color/colorLogin" />
+
+    <Button
+        android:id="@+id/btn_fot"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="24dp"
+        android:background="@android:drawable/ic_menu_camera"
+        android:textColor="@color/colorWhite"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_des" />
+</androidx.constraintlayout.widget.ConstraintLayout>
