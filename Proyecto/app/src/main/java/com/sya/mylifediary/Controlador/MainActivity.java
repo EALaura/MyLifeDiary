@@ -21,9 +21,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Ir al activity principal
+        //Inicializar
         btn_ini_ses = (Button)findViewById(R.id.btn_Ini);
+        btn_salir = (Button)findViewById(R.id.btn_Sal);
+        btn_regi = (Button)findViewById(R.id.btn_Reg);
 
+        //Ir al activity principal
         btn_ini_ses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -34,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Salir de la aplicacion
-        btn_salir = (Button)findViewById(R.id.btn_Sal);
-
         btn_salir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Ir a registro
-        btn_regi = (Button)findViewById(R.id.btn_Reg);
-
         btn_regi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

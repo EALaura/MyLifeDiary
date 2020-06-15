@@ -19,9 +19,11 @@ public class registroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
+        //Inicializar
+        btn_regis = (Button)findViewById(R.id.btn_regi);
+        btn_can = (Button)findViewById(R.id.btn_can);
 
         //Registrarse en la base de datos
-        btn_regis = (Button)findViewById(R.id.btn_regi);
         btn_regis.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -30,7 +32,6 @@ public class registroActivity extends AppCompatActivity {
         });
 
         //Boton Cancelar redirige a la pantalla de Inicio
-        btn_can = (Button)findViewById(R.id.btn_can);
         btn_can.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
