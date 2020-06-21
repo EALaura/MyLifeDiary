@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sya.mylifediary">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:name=".Controlador.Apps.MyApp"
         android:allowBackup="true"
@@ -10,20 +12,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Controlador.Splash.SplashActivity"
+        <activity android:name=".Controlador.Activities.RegisterActivity"></activity>
+        <activity
+            android:name=".Controlador.Activities.StoryActivity"
+            android:parentActivityName=".Controlador.Activities.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controlador.Activities.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".Controlador.Splash.SplashActivity"
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".Controlador.Activities.HomeActivity" />
-        <activity android:name=".Controlador.Activities.LoginActivity">
-
-        </activity>
-        <activity android:name=".Controlador.Activities.principalActivity" />
-        <activity android:name=".Controlador.Activities.registroActivity" />
-        <activity android:name=".Controlador.Activities.MainActivity" />
+        <activity android:name=".Controlador.Activities.LoginActivity" />
     </application>
 
 </manifest>

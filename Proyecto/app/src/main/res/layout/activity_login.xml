@@ -54,6 +54,31 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
+        android:textSize="15dp"
+        android:textColor="@color/colorWhite"
+        android:backgroundTint="#ef9a9a"
         android:text="Iniciar Sesion" />
 
+    <Button
+        android:id="@+id/buttonRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:textColor="@color/colorWhite"
+        android:backgroundTint="#ef9a9a"
+        android:text="Registrarse" />
+
+    <Button
+        android:id="@+id/buttonOut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:textColor="@color/colorWhite"
+        android:backgroundTint="#ef9a9a"
+        android:text="Salir" />
 </LinearLayout>

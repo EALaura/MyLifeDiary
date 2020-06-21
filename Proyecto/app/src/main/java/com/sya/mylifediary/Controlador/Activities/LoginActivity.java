@@ -21,6 +21,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText textPass;
     private Switch switchRemember;
     private Button btnLogin;
+    private Button btnRegister;
+    private Button btnOut;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,13 +42,30 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void bindUI(){
         textEmail = findViewById(R.id.textEmail);
-        textPass = findViewById(R.id.textPass);;
-        switchRemember = findViewById(R.id.switchRemember);;
-        btnLogin = findViewById(R.id.buttonLogin);;
+        textPass = findViewById(R.id.textPass);
+        switchRemember = findViewById(R.id.switchRemember);
+        btnLogin = findViewById(R.id.buttonLogin);
+        btnRegister = findViewById(R.id.buttonRegister);
+        btnOut = findViewById(R.id.buttonOut);
     }
 
     private void saveOnPreferences(String email, String password){
