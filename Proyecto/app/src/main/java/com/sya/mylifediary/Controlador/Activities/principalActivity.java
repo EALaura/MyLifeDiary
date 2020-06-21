@@ -1,4 +1,4 @@
-package com.sya.mylifediary.Controlador;
+package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

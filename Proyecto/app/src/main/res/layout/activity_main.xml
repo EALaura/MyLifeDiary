@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="50dp"
     android:background="@color/background"
-    tools:context=".Controlador.MainActivity">
+    tools:context=".Controlador.Activities.MainActivity">
 
     <TextView
         android:id="@+id/textView2"

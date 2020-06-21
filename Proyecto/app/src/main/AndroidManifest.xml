@@ -3,21 +3,27 @@
     package="com.sya.mylifediary">
 
     <application
+        android:name=".Controlador.Apps.MyApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_myicon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Controlador.principalActivity"></activity>
-        <activity android:name=".Controlador.registroActivity" />
-        <activity android:name=".Controlador.MainActivity">
+        <activity android:name=".Controlador.Splash.SplashActivity"
+            android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Controlador.Activities.HomeActivity" />
+        <activity android:name=".Controlador.Activities.LoginActivity">
+
+        </activity>
+        <activity android:name=".Controlador.Activities.principalActivity" />
+        <activity android:name=".Controlador.Activities.registroActivity" />
+        <activity android:name=".Controlador.Activities.MainActivity" />
     </application>
 
 </manifest>
