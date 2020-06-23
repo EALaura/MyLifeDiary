@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
@@ -28,16 +29,19 @@ import java.util.List;
 import java.util.Locale;
 import com.sya.mylifediary.Controlador.Services.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.StoryActivityInf;
+import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
 
-public class StoryActivity extends AppCompatActivity {
+public class StoryActivity extends AppCompatActivity{
 
     private static final String TAG = "MainActivity";
     private LocationBroadcastReceiver broadcastReceiver;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
     TextView textAddress;
     ImageView image;
-    Button camera;
+    EditText descr;
+    Button camera, save;
+    String location, description;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,14 +51,27 @@ public class StoryActivity extends AppCompatActivity {
         broadcastReceiver = new LocationBroadcastReceiver(storyActivityInf);
         checkLocationPermission();
         textAddress = findViewById(R.id.textAddress);
-        image = findViewById(R.id.view_img);
+        image = findViewById(R.id.photo);
         camera = findViewById(R.id.btn_cam);
+        descr = findViewById(R.id.description);
+        save = findViewById(R.id.buttonStory);
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 startActivityForResult(intent, 0);
+            }
+        });
+
+        description = descr.getText().toString();
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Story story = new Story(location, description,3);
+                Intent intent = new Intent(StoryActivity.this, ListStories.class);
+                intent.putExtra("story", story);
+                startActivity(intent);
             }
         });
     }
@@ -141,6 +158,7 @@ public class StoryActivity extends AppCompatActivity {
             String address = convertToAddress(longitude, latitude);
             Log.d(TAG,  "Direccion mi casa :v: " + address);
             textAddress.setText(address);
+            location = address;
         }
         //public void Display enabled
     };
