@@ -48,7 +48,7 @@
                 android:padding="20dp"
                 android:layout_width="match_parent"
                 android:orientation="vertical"
-                android:background="@drawable/fondo"
+                android:background="@drawable/back_descr"
                 android:layout_height="match_parent">
 
                 <TextView
@@ -89,7 +89,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btn"
-        android:src="@drawable/ic_add"
+        android:src="@drawable/ic_share"
         app:layout_anchor="@id/cardview"
         app:layout_anchorGravity="top|end"
         android:layout_marginRight="16dp"

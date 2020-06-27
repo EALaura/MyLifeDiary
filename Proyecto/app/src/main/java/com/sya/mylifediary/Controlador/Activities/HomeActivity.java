@@ -17,7 +17,7 @@ import com.sya.mylifediary.R;
 public class HomeActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
-    Button btnAdd;
+    Button btnAdd, btnReceive;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +33,20 @@ public class HomeActivity extends AppCompatActivity {
         // busca el ya creado en el login x el mismo nombre string
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         btnAdd = findViewById(R.id.buttonAdd);
+        btnReceive = findViewById(R.id.buttonReceive);
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, StoryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btnReceive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, ReceiveActivity.class);
                 startActivity(intent);
             }
         });

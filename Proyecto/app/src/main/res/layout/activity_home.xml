@@ -1,22 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="30dp"
-    tools:context=".Controlador.Activities.HomeActivity">
+    tools:context=".Controlador.Activities.HomeActivity"
+    android:orientation="vertical">
 
     <Button
-        android:layout_width="match_parent"
+        android:id="@+id/buttonAdd"
+        android:layout_gravity="center"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_add"
         android:drawablePadding="8dp"
-        android:id="@+id/buttonAdd"
-        android:textColor="@color/colorBlack"
+        android:textColor="@color/colorWhite"
         android:textSize="15dp"
         android:backgroundTint="#ef9a9a"
         android:text="Agregar Historia"
         android:layout_centerVertical="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
-</RelativeLayout>
+
+    <Button
+        android:id="@+id/buttonReceive"
+        android:layout_gravity="center"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_down"
+        android:drawablePadding="8dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp"
+        android:backgroundTint="#ef9a9a"
+        android:text="Recibir Historia"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/buttonChat"
+        android:layout_gravity="center"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_chat"
+        android:drawablePadding="8dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp"
+        android:backgroundTint="#ef9a9a"
+        android:text="Iniciar Chat"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+</LinearLayout>

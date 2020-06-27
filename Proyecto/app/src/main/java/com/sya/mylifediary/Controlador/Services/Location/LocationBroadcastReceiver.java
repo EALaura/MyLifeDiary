@@ -1,4 +1,4 @@
-package com.sya.mylifediary.Controlador.Services;
+package com.sya.mylifediary.Controlador.Services.Location;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

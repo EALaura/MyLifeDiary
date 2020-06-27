@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import com.sya.mylifediary.Controlador.Services.LocationBroadcastReceiver;
-import com.sya.mylifediary.Controlador.Services.StoryActivityInf;
+import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
+import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
 
