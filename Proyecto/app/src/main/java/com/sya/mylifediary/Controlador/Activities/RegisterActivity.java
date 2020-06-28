@@ -18,6 +18,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         btnRegister = findViewById(R.id.buttonSave);
         btnCancel = findViewById(R.id.buttonCancel);

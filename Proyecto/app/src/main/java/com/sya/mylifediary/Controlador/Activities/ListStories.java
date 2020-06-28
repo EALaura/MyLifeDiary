@@ -1,8 +1,8 @@
 package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager;
 import com.sya.mylifediary.Controlador.Adapter.StoryAdapter;
@@ -13,15 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListStories extends AppCompatActivity {
-    public static Context context;
     HorizontalInfiniteCycleViewPager viewpager;
     List<Story> stories = new ArrayList<>();
+    Acelerometro acelerometro;
+    private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_stories);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        context = this;
+        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         Story myStory = (Story) getIntent().getSerializableExtra("story");
         myStory.setPhoto(R.drawable.img3);
@@ -34,20 +36,23 @@ public class ListStories extends AppCompatActivity {
         viewpager.setAdapter(adapter);
 
         //Se agrega el acelerometro
-        Acelerometro acelerometro = new Acelerometro(getContext());
+        acelerometro = new Acelerometro(this, sharedPreferences);
     }
 
     @Override
     protected void onPause() {
+        acelerometro.getSensorManager().unregisterListener(acelerometro);
         super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        acelerometro.iniciarSensor();
+        super.onRestart();
     }
 
     private void initData() {
         stories.add(new Story("Cuba", "El gran lugar de mis vacaciones soñadas.", R.drawable.img1));
         stories.add(new Story("Puerto Rico", "Buenos momentos en familia.", R.drawable.img2));
-    }
-
-    public static Context getContext(){
-        return context;
     }
 }

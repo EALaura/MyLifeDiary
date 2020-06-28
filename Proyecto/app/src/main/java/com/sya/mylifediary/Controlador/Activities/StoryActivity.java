@@ -16,17 +16,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.LocationManager;
-import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Model.Story;
@@ -48,13 +43,14 @@ public class StoryActivity extends AppCompatActivity{
         setContentView(R.layout.activity_story);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        broadcastReceiver = new LocationBroadcastReceiver(storyActivityInf);
+        broadcastReceiver = new LocationBroadcastReceiver(storyActivityInf, this);
         checkLocationPermission();
         textAddress = findViewById(R.id.textAddress);
         image = findViewById(R.id.photo);
         camera = findViewById(R.id.btn_cam);
-        descr = findViewById(R.id.description);
+        descr = findViewById(R.id.txtDescription);
         save = findViewById(R.id.buttonStory);
+        description = descr.getText().toString();
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,11 +60,11 @@ public class StoryActivity extends AppCompatActivity{
             }
         });
 
-        description = descr.getText().toString();
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Story story = new Story(location, description,3);
+                Toast.makeText(StoryActivity.this, location + description, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(StoryActivity.this, ListStories.class);
                 intent.putExtra("story", story);
                 startActivity(intent);
@@ -87,7 +83,7 @@ public class StoryActivity extends AppCompatActivity{
             Log.d(TAG, "broadcastReceiver is null");
         }
     }
-
+    // no se reciban lecturas en background
     @Override
     protected void onPause() {
         super.onPause();
@@ -113,19 +109,16 @@ public class StoryActivity extends AppCompatActivity{
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
+            case MY_PERMISSIONS_REQUEST_LOCATION: { // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // location-related task you need to do.
+                    // permission was granted
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED) {
                         initGPS();
                     }
                 } else {
                     // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                     Log.d(TAG, "Location not allowed");
                 }
                 return;
@@ -134,15 +127,13 @@ public class StoryActivity extends AppCompatActivity{
     }
 
     public void initGPS() {
-        // enviara directamente el mensaje al LOcation broadcast receiver
-        // llamado implicito
+        // enviara directamente el mensaje al LOcation broadcast receiver, llamado implicito
         Intent intent = new Intent((LocationManager.KEY_LOCATION_CHANGED));
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(//sendBroadcast(...)
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 this,
                 0,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -154,43 +145,10 @@ public class StoryActivity extends AppCompatActivity{
 
     private StoryActivityInf storyActivityInf = new StoryActivityInf() {
         @Override
-        public void DisplayLocationChange(double latitude, double longitude) {
-            String address = convertToAddress(longitude, latitude);
+        public void DisplayLocationChange(String address) {
             Log.d(TAG,  "Direccion mi casa :v: " + address);
             textAddress.setText(address);
             location = address;
         }
-        //public void Display enabled
     };
-
-    private String convertToAddress(double longitude, double latitude) {
-        String addressText = null;
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        List<Address> addresses = null;
-        try {
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
-        } catch (IOException ioException) {
-            // Network or other I/O issues
-            Log.e(TAG, "network_service_error", ioException);
-        } catch (IllegalArgumentException illegalArgumentException) {
-            // Invalid long / lat
-            Log.e(TAG, "invalid_long_lat" + ". " + "Latitude = " + latitude + ", Longitude = " + longitude, illegalArgumentException);
-        }
-
-        // No address was found
-        if (addresses == null || addresses.size() == 0) {
-            Log.e(TAG, "no_address_found");
-        } else {
-            Address address = addresses.get(0);
-            ArrayList<String> addressFragments = new ArrayList<>();
-
-            // Fetch the address lines, join them, and return to thread
-            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                addressFragments.add(address.getAddressLine(i));
-            }
-            Log.i(TAG, "address_found");
-            addressText = TextUtils.join(System.getProperty("line.separator"), addressFragments);
-        }
-        return addressText;
-    }
 }

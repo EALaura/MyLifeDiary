@@ -23,6 +23,21 @@
         android:layout_centerHorizontal="true" />
 
     <Button
+        android:id="@+id/buttonList"
+        android:layout_gravity="center"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_list"
+        android:drawablePadding="8dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp"
+        android:backgroundTint="#ef9a9a"
+        android:text="Ver Mis Historias"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
         android:id="@+id/buttonReceive"
         android:layout_gravity="center"
         android:layout_width="230dp"

@@ -39,6 +39,7 @@ public class ReceiveActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_receive);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findViewItems();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();

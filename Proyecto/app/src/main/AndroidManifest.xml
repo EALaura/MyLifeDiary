@@ -14,10 +14,36 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Controlador.Activities.ShareActivity"></activity>
-        <activity android:name=".Controlador.Activities.ReceiveActivity" />
-        <activity android:name=".Controlador.Activities.ListStories" />
-        <activity android:name=".Controlador.Activities.RegisterActivity" />
+        <activity android:name=".Controlador.Activities.ChatActivity"
+            android:parentActivityName=".Controlador.Activities.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controlador.Activities.HomeActivity" />
+        </activity>
+        <activity android:name=".Controlador.Activities.ShareActivity"
+            android:parentActivityName=".Controlador.Activities.ListStories" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controlador.Activities.ListStories" />
+        </activity>
+        <activity android:name=".Controlador.Activities.ReceiveActivity"
+            android:parentActivityName=".Controlador.Activities.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controlador.Activities.HomeActivity" />
+        </activity>
+        <activity android:name=".Controlador.Activities.ListStories"
+            android:parentActivityName=".Controlador.Activities.HomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controlador.Activities.HomeActivity" />
+        </activity>
+        <activity android:name=".Controlador.Activities.RegisterActivity"
+            android:parentActivityName=".Controlador.Activities.LoginActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Controlador.Activities.LoginActivity" />
+        </activity>
         <activity
             android:name=".Controlador.Activities.StoryActivity"
             android:parentActivityName=".Controlador.Activities.HomeActivity">

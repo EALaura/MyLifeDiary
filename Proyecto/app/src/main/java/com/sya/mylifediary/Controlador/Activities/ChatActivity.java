@@ -4,10 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,33 +14,31 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
-import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
+import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveChat;
 import com.sya.mylifediary.R;
 
-public class ShareActivity extends AppCompatActivity {
-    Button listDevices, send;
+public class ChatActivity extends AppCompatActivity {
+    Button listen, listDevices, send;
     ListView listView;
-    TextView status;
-    ImageView canvas;
-    Bitmap bitmap;
+    TextView box_canvas, status;
+    EditText writeMsg;
     BluetoothAdapter bluetoothAdapter;
     BluetoothDevice [] btArray; // contiene todos los dispositivos
-    SendReceiveImage sendReceive;
+    String previusChat = "", currentMsg;
+    SendReceiveChat sendReceive;
     // variables para el Handler
     static final int STATE_LISTENING = 1;
     static final int STATE_CONNECTING = 2;
     static final int STATE_CONNECTED = 3;
     static final int STATE_CONECTION_FAILED = 4;
     static final int STATE_MESSAGE_RECEIVED = 5;
+
     int REQUEST_ENABLE_BLUETOOTH = 1;
     private static final String APP_NAME = "MyLifeDiary";
     private static final UUID MY_UUID = UUID.fromString("19b29419-3b3e-4d87-aefd-2488b6e8dd3b");
@@ -49,8 +46,8 @@ public class ShareActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_share);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_chat);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         findViewItems();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -59,23 +56,17 @@ public class ShareActivity extends AppCompatActivity {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
         }
-
-        try {
-            bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"));
-            canvas.setImageBitmap(bitmap);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
         implementListeners();
     }
 
     private void findViewItems() {
+        listen = findViewById(R.id.buttonListen);
         send = findViewById(R.id.buttonSend);
         listDevices = findViewById(R.id.buttonDevices);
         listView = findViewById(R.id.listDevices);
-        canvas = findViewById(R.id.image);
+        box_canvas = findViewById(R.id.canvas);
         status = findViewById(R.id.txtstatus);
+        writeMsg = findViewById(R.id.editText);
     }
 
     Handler handler = new Handler(new Handler.Callback() {
@@ -92,8 +83,9 @@ public class ShareActivity extends AppCompatActivity {
                     status.setText("Error"); break;
                 case STATE_MESSAGE_RECEIVED:
                     byte [] readBuffer = (byte[]) msg.obj;
-                    Bitmap bitmap =  BitmapFactory.decodeByteArray(readBuffer, 0, msg.arg1);
-                    canvas.setImageBitmap(bitmap);
+                    String tempMsg = new String(readBuffer, 0, msg.arg1);
+                    previusChat = previusChat + tempMsg;
+                    box_canvas.setText(previusChat);
                     break;
             }
             return true;
@@ -114,10 +106,18 @@ public class ShareActivity extends AppCompatActivity {
                         devices[index] = device.getName();
                         index++;
                     }
-                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ShareActivity.this,
+                    ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ChatActivity.this,
                             android.R.layout.simple_list_item_1, devices);
                     listView.setAdapter(arrayAdapter);
                 }
+            }
+        });
+
+        listen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ServerClass serverClass = new ServerClass();
+                serverClass.start();
             }
         });
 
@@ -133,19 +133,51 @@ public class ShareActivity extends AppCompatActivity {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
-                byte [] imageBytes = stream.toByteArray();
-
-                int subArraySize = 400;
-                sendReceive.write(String.valueOf(imageBytes.length).getBytes());
-                // para enviar los subarrays
-                for(int i = 0; i < imageBytes.length; i += subArraySize){
-                    byte [] tempArray = Arrays.copyOfRange(imageBytes, i, Math.min(imageBytes.length, i + subArraySize));
-                    sendReceive.write(tempArray);
-                }
+                String str_message = String.valueOf(writeMsg.getText());
+                currentMsg = bluetoothAdapter.getName() + ": " + str_message + "\n";
+                previusChat = previusChat + currentMsg;
+                box_canvas.setText(previusChat);
+                sendReceive.write(currentMsg.getBytes());
+                writeMsg.setText("");
             }
         });
+    }
+
+    private class ServerClass extends Thread{
+        private BluetoothServerSocket serverSocket;
+        public ServerClass(){
+            try {
+                serverSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(APP_NAME, MY_UUID);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void run(){
+            BluetoothSocket socket = null;
+            while(socket == null){
+                try {
+                    Message message = Message.obtain();
+                    message.what = STATE_CONNECTING;
+                    handler.sendMessage(message);
+                    socket = serverSocket.accept();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Message message = Message.obtain();
+                    message.what = STATE_CONECTION_FAILED;
+                    handler.sendMessage(message);
+                }
+                if (socket != null){
+                    Message message = Message.obtain();
+                    message.what = STATE_CONNECTED;
+                    handler.sendMessage(message);
+                    // write some code for send / receive
+                    sendReceive = new SendReceiveChat(socket, handler);
+                    sendReceive.start();
+                    break;
+                }
+            }
+        }
     }
 
     private class ClientClass extends Thread{
@@ -166,7 +198,7 @@ public class ShareActivity extends AppCompatActivity {
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTED;
                 handler.sendMessage(message);
-                sendReceive = new SendReceiveImage(socket, handler);
+                sendReceive = new SendReceiveChat(socket, handler);
                 sendReceive.start();
 
             } catch (IOException e) {

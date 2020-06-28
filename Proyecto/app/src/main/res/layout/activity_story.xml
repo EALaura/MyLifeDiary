@@ -41,20 +41,12 @@
         android:text="" />
 
     <EditText
-        android:id="@+id/description"
+        android:id="@+id/txtDescription"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_marginTop="20dp"
-        android:hint="Descripción"
-        android:inputType="textPersonName"
-        tools:layout_editor_absoluteX="20dp"
         android:textColor="@color/colorBlack"
-        android:textColorHint="@color/color_hint"
-        android:textColorLink="@color/colorLogin"
-        android:backgroundTint="@color/colorLogin"
-        android:textColorHighlight="@color/colorLogin"
-        android:layout_gravity="center"
-        android:textCursorDrawable="@color/colorLogin" />
+        android:textColorHint="@color/color_hint" />
 
     <Button
         android:id="@+id/btn_cam"
