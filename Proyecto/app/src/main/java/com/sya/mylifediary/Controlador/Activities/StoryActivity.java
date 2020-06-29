@@ -18,8 +18,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.util.Log;
-import android.widget.Toast;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
@@ -34,7 +32,7 @@ public class StoryActivity extends AppCompatActivity{
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
     TextView textAddress;
     ImageView image;
-    EditText descr;
+    EditText descriptionText;
     Button camera, save;
     String location, description;
     @Override
@@ -48,9 +46,8 @@ public class StoryActivity extends AppCompatActivity{
         textAddress = findViewById(R.id.textAddress);
         image = findViewById(R.id.photo);
         camera = findViewById(R.id.btn_cam);
-        descr = findViewById(R.id.txtDescription);
+        descriptionText = findViewById(R.id.txt_description);
         save = findViewById(R.id.buttonStory);
-        description = descr.getText().toString();
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,8 +60,8 @@ public class StoryActivity extends AppCompatActivity{
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                description = descriptionText.getText().toString();
                 Story story = new Story(location, description,3);
-                Toast.makeText(StoryActivity.this, location + description, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(StoryActivity.this, ListStories.class);
                 intent.putExtra("story", story);
                 startActivity(intent);
@@ -86,8 +83,8 @@ public class StoryActivity extends AppCompatActivity{
     // no se reciban lecturas en background
     @Override
     protected void onPause() {
-        super.onPause();
         unregisterReceiver(broadcastReceiver);
+        super.onPause();
     }
 
     @Override
@@ -146,7 +143,7 @@ public class StoryActivity extends AppCompatActivity{
     private StoryActivityInf storyActivityInf = new StoryActivityInf() {
         @Override
         public void DisplayLocationChange(String address) {
-            Log.d(TAG,  "Direccion mi casa :v: " + address);
+            Log.d(TAG,  "Direccion de mi casa :v: " + address);
             textAddress.setText(address);
             location = address;
         }

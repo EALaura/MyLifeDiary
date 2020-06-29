@@ -106,7 +106,7 @@ public class Acelerometro implements SensorEventListener {
         mLastZ = zAcc;
 
         double aceleracion = aceleracionTotal(mHighPassX, mHighPassY, mHighPassZ);
-        Log.d("Sensor Acelerometro", "X: " + mHighPassX + ",\"Y: \t" + mHighPassY + "Z: \t" + mHighPassZ + "Ac. Total: \t" + aceleracion);
+        Log.d("Sensor Acelerometro", " X: " + mHighPassX + ", \tY: " + mHighPassY + ", \t Z: " + mHighPassZ + ", \t Ac. Total: " + aceleracion);
         /*Toast toast = Toast.makeText(MainActivity.getContext(),aceleracion + " ac", Toast.LENGTH_SHORT );
         toast.show();*/
         if (aceleracion > 50) {  // hay un forsejeo por robo

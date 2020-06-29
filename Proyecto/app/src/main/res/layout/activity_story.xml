@@ -11,7 +11,6 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp"
         android:text="My Life Diary"
         android:textSize="30dp"
         android:layout_gravity="center"
@@ -19,8 +18,10 @@
 
     <ImageView
         android:id="@+id/photo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="180dp"
+        android:layout_height="250dp"
+        android:scaleType="fitXY"
+        android:background="@drawable/back_image"
         android:layout_marginTop="16dp"
         android:layout_gravity="center" />
 
@@ -28,31 +29,38 @@
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
+        android:layout_margin="15dp"
         android:layout_gravity="center"
         android:text="Ubicacion Actual:" />
 
     <TextView
         android:id="@+id/textAddress"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_height="25dp"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/shape"
+        android:backgroundTint="#ffd6bb"
         android:layout_gravity="center"
         android:text="" />
 
     <EditText
-        android:id="@+id/txtDescription"
+        android:id="@+id/txt_description"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/colorBlack"
-        android:textColorHint="@color/color_hint" />
+        android:layout_height="100dp"
+        android:gravity="top"
+        android:background="@drawable/shape"
+        android:hint="Escribe tu Historia"
+        android:inputType="textMultiLine"
+        android:overScrollMode="always"
+        android:padding="15dp"
+        android:scrollbarStyle="insideInset"
+        android:scrollbars="vertical" />
 
     <Button
         android:id="@+id/btn_cam"
         android:layout_width="45dp"
         android:layout_height="45dp"
-        android:layout_marginTop="24dp"
         android:background="@android:drawable/ic_menu_camera"
         android:textColor="@color/colorWhite"
         android:layout_gravity="center" />

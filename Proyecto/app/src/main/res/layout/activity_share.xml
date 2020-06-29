@@ -46,6 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_gravity="center"
+        android:background="@drawable/shape"
+        android:backgroundTint="#ffd6bb"
         android:orientation="horizontal">
 
         <TextView
