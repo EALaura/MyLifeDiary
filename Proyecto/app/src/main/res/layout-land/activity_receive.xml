@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp"
+    android:orientation="vertical"
+    tools:context=".Controlador.Activities.ReceiveActivity">
+
+    <TextView
+        android:text="Recibir Historia"
+        android:textSize="30dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="200dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/waiting_story" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:background="@drawable/shape"
+                android:backgroundTint="#ffd6bb"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:text="Bluetooth status:" />
+
+                <TextView
+                    android:id="@+id/txtstatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight="1"
+                    android:text="Esperando" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/buttonListen"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="20dp"
+                    android:backgroundTint="#ef9a9a"
+                    android:gravity="center"
+                    android:text="Escuchar"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="15dp" />
+
+                <Button
+                    android:id="@+id/buttonDownload"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#ef9a9a"
+                    android:gravity="center"
+                    android:text="Descargar"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="15dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

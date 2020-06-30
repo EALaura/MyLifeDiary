@@ -61,7 +61,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Controlador.Activities.HomeActivity" />
-        <activity android:name=".Controlador.Activities.LoginActivity" />
+        <activity android:name=".Controlador.Activities.LoginActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>
