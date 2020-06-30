@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "440453186817",
+    "firebase_url": "https://mylifediary-app.firebaseio.com",
+    "project_id": "mylifediary-app",
+    "storage_bucket": "mylifediary-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440453186817:android:e409f47974ba4f38844700",
+        "android_client_info": {
+          "package_name": "com.sya.mylifediary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "440453186817-hbjsrckc2o1632a3gak4q9404bs2iajs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbbvz_VEkMBlf-sIZAantZn8kE4XzibIU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "440453186817-hbjsrckc2o1632a3gak4q9404bs2iajs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
