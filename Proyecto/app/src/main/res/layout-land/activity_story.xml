@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_margin="30dp"
+    android:layout_marginLeft="30dp"
+    android:layout_marginRight="30dp"
     tools:context=".Controlador.Activities.StoryActivity">
 
     <LinearLayout
@@ -14,10 +15,9 @@
 
         <ImageView
             android:id="@+id/photo"
-            android:layout_width="180dp"
-            android:layout_height="250dp"
+            android:layout_width="170dp"
+            android:layout_height="240dp"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"
             android:background="@drawable/back_image"
             android:scaleType="fitXY" />
 
@@ -36,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="15dp"
+                    android:layout_margin="1dp"
                     android:text="Ubicacion Actual:" />
 
                 <TextView
@@ -44,13 +44,21 @@
                     android:layout_width="wrap_content"
                     android:layout_height="25dp"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="1dp"
                     android:background="@drawable/shape"
                     android:backgroundTint="#ffd6bb"
                     android:gravity="center"
                     android:text="" />
             </LinearLayout>
-
+            <EditText
+                android:id="@+id/textTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="1dp"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:hint="Titulo" />
             <EditText
                 android:id="@+id/txt_description"
                 android:layout_width="match_parent"

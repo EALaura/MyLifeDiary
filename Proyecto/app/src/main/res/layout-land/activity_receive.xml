@@ -4,17 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
+    android:layout_margin="10dp"
     android:orientation="vertical"
     tools:context=".Controlador.Activities.ReceiveActivity">
-
-    <TextView
-        android:text="Recibir Historia"
-        android:textSize="30dp"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_marginBottom="20dp"
-        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,17 +15,25 @@
 
         <ImageView
             android:id="@+id/image"
-            android:layout_width="200dp"
-            android:layout_height="300dp"
             android:layout_gravity="center"
-            android:layout_marginBottom="20dp"
             android:scaleType="fitXY"
-            android:src="@drawable/waiting_story" />
+            android:layout_height="300dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/waiting_story"
+            android:layout_width="200dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center"
+                android:text="Recibir Historia"
+                android:textSize="30dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
