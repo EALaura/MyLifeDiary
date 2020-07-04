@@ -2,6 +2,7 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,19 +12,20 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.Manifest;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.util.Log;
+import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 
 public class StoryActivity extends AppCompatActivity{
 
@@ -32,9 +34,11 @@ public class StoryActivity extends AppCompatActivity{
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
     TextView textAddress;
     ImageView image;
-    EditText descriptionText;
+    EditText titleText, descriptionText;
     Button camera, save;
-    String location, description;
+    String title, location, description;
+    Bitmap bitmap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +47,7 @@ public class StoryActivity extends AppCompatActivity{
 
         broadcastReceiver = new LocationBroadcastReceiver(storyActivityInf, this);
         checkLocationPermission();
-        textAddress = findViewById(R.id.textAddress);
-        image = findViewById(R.id.photo);
-        camera = findViewById(R.id.btn_cam);
-        descriptionText = findViewById(R.id.txt_description);
-        save = findViewById(R.id.buttonStory);
+        findViewItems();
 
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,13 +60,50 @@ public class StoryActivity extends AppCompatActivity{
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                title = titleText.getText().toString();
                 description = descriptionText.getText().toString();
-                Story story = new Story(location, description,3);
-                Intent intent = new Intent(StoryActivity.this, ListStories.class);
-                intent.putExtra("story", story);
-                startActivity(intent);
+                if (title.equals("")){
+                    titleText.setError("Required");
+                } else if(description.equals("")) {
+                    descriptionText.setError("Required");
+                } else {
+                    saveStory();
+                }
             }
         });
+    }
+
+    private void findViewItems() {
+        textAddress = findViewById(R.id.textAddress);
+        image = findViewById(R.id.photo);
+        camera = findViewById(R.id.btn_cam);
+        descriptionText = findViewById(R.id.txt_description);
+        titleText = findViewById(R.id.textTitle);
+        save = findViewById(R.id.buttonStory);
+    }
+
+    private void saveStory() {
+        createImageFromBitmap(bitmap);
+        Story story = new Story(title, location, description, null);
+        Intent intent = new Intent(StoryActivity.this, ListStories.class);
+        intent.putExtra("story", story);
+        startActivity(intent);
+        Toast.makeText(StoryActivity.this, "Guardado Exitosamente!", Toast.LENGTH_SHORT).show();
+    }
+
+    public String createImageFromBitmap(Bitmap bitmap) {
+        String fileName = "photo";//no .png or .jpg needed
+        try {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+            FileOutputStream fo = this.openFileOutput(fileName, Context.MODE_PRIVATE);
+            fo.write(bytes.toByteArray());
+            fo.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fileName = null;
+        }
+        return fileName;
     }
 
     @Override
@@ -90,16 +127,13 @@ public class StoryActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //Captura la imagen obtenida de la camara
-        Bitmap bitmap = (Bitmap)data.getExtras().get("data");
+        bitmap = (Bitmap)data.getExtras().get("data");   //Captura la imagen obtenida de la camara
         image.setImageBitmap(bitmap);
     }
 
     public boolean checkLocationPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION},
-                MY_PERMISSIONS_REQUEST_LOCATION);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
         return true;
     }
 
@@ -108,14 +142,11 @@ public class StoryActivity extends AppCompatActivity{
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: { // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {  // permission was granted
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                            == PackageManager.PERMISSION_GRANTED) {
-                        initGPS();
-                    }
-                } else {
-                    // permission denied, boo! Disable the
+                            == PackageManager.PERMISSION_GRANTED)
+                        broadcastReceiver.initGPS();
+                } else {    // permission denied, boo! Disable the
                     Log.d(TAG, "Location not allowed");
                 }
                 return;
@@ -123,27 +154,10 @@ public class StoryActivity extends AppCompatActivity{
         }
     }
 
-    public void initGPS() {
-        // enviara directamente el mensaje al LOcation broadcast receiver, llamado implicito
-        Intent intent = new Intent((LocationManager.KEY_LOCATION_CHANGED));
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                this,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, pendingIntent);
-    }
-
     private StoryActivityInf storyActivityInf = new StoryActivityInf() {
         @Override
         public void DisplayLocationChange(String address) {
-            Log.d(TAG,  "Direccion de mi casa :v: " + address);
+            Log.d(TAG,  "Mi ubicacion: " + address);
             textAddress.setText(address);
             location = address;
         }

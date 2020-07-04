@@ -1,16 +1,28 @@
 package com.sya.mylifediary.Model;
 
+import android.graphics.Bitmap;
 import java.io.Serializable;
 
 public class Story implements Serializable {
 
-    String location, description;
-    int photo;
+    private String title;
+    private String location;
+    private String description;
+    private transient Bitmap photo;     // para que sea compatible con serializable
 
-    public Story(String location, String description, int photo) {
+    public Story(String title, String location, String description, Bitmap photo) {
+        this.title = title;
         this.location = location;
         this.description = description;
         this.photo = photo;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getLocation() {
@@ -29,11 +41,11 @@ public class Story implements Serializable {
         this.description = description;
     }
 
-    public int getPhoto() {
+    public Bitmap getPhoto() {
         return photo;
     }
 
-    public void setPhoto(int photo) {
+    public void setPhoto(Bitmap photo) {
         this.photo = photo;
     }
 }

@@ -15,11 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.sya.mylifediary.Controlador.Activities.HomeActivity;
 import com.sya.mylifediary.Controlador.Activities.ShareActivity;
-import com.sya.mylifediary.Controlador.Activities.StoryActivity;
 import com.sya.mylifediary.Model.Story;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.List;
@@ -56,15 +53,15 @@ public class StoryAdapter extends PagerAdapter {
         // inflate view
         final View view = LayoutInflater.from(context).inflate(R.layout.card_item, container, false);
         // View
-        ImageView imageView = (ImageView) view.findViewById(R.id.vista);
-        TextView title = (TextView) view.findViewById(R.id.title);
-        TextView location = (TextView) view.findViewById(R.id.location);
-        TextView description = (TextView) view.findViewById(R.id.description);
+        ImageView imageView = view.findViewById(R.id.vista);
+        TextView title = view.findViewById(R.id.title);
+        TextView location = view.findViewById(R.id.location);
+        TextView description = view.findViewById(R.id.description);
         FloatingActionButton share = view.findViewById(R.id.btn);
 
         // set data
-        imageView.setImageResource(listStories.get(position).getPhoto());
-        title.setText(listStories.get(position).getLocation());
+        imageView.setImageBitmap(listStories.get(position).getPhoto());
+        title.setText(listStories.get(position).getTitle());
         location.setText(listStories.get(position).getLocation());
         description.setText(listStories.get(position).getDescription());
 

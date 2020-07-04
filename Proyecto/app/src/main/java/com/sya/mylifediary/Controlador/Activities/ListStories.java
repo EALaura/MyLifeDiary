@@ -3,12 +3,15 @@ package com.sya.mylifediary.Controlador.Activities;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager;
 import com.sya.mylifediary.Controlador.Adapter.StoryAdapter;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +19,7 @@ public class ListStories extends AppCompatActivity {
     HorizontalInfiniteCycleViewPager viewpager;
     List<Story> stories = new ArrayList<>();
     Acelerometro acelerometro;
+    Bitmap bitmap;
     private SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,17 +30,21 @@ public class ListStories extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
 
         Story myStory = (Story) getIntent().getSerializableExtra("story");
-        myStory.setPhoto(R.drawable.img3);
+        try {
+            bitmap = BitmapFactory.decodeStream(this.openFileInput("photo"));
+            myStory.setPhoto(bitmap);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
-        initData();
         stories.add(myStory);
+        initData();
 
-        viewpager = (HorizontalInfiniteCycleViewPager) findViewById(R.id.view);
+        viewpager = findViewById(R.id.view);
         StoryAdapter adapter = new StoryAdapter(stories, this);
         viewpager.setAdapter(adapter);
 
-        //Se agrega el acelerometro
-        acelerometro = new Acelerometro(this, sharedPreferences);
+        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
     }
 
     @Override
@@ -52,7 +60,11 @@ public class ListStories extends AppCompatActivity {
     }
 
     private void initData() {
-        stories.add(new Story("Cuba", "El gran lugar de mis vacaciones soñadas.", R.drawable.img1));
-        stories.add(new Story("Puerto Rico", "Buenos momentos en familia.", R.drawable.img2));
+        Bitmap icon1 = BitmapFactory.decodeResource(this.getResources(), R.drawable.img1);
+        Bitmap icon2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.img2);
+        Bitmap icon3 = BitmapFactory.decodeResource(this.getResources(), R.drawable.img3);
+        stories.add(new Story("Playa", "Cuba", "El gran lugar de mis vacaciones soñadas.", icon1));
+        stories.add(new Story("Hotel", "Puerto Rico", "Buenos momentos en familia.",icon2));
+        stories.add(new Story("Aeropuerto", "Peru", "Regreso el siguiente mes.",icon3));
     }
 }
