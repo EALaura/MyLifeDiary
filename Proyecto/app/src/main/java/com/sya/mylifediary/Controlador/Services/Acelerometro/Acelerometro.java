@@ -46,9 +46,9 @@ public class Acelerometro implements SensorEventListener {
         float yAcc = sensorEvent.values[1];
         float zAcc = sensorEvent.values[2];
 
-        //orientacion del dispositivo
+        // Orientacion del dispositivo
         orientacion(xAcc, yAcc);
-        movimiento(xAcc, yAcc);
+        // Movimiento del dispositivo
         peligro(xAcc, yAcc, zAcc);
     }
 
@@ -68,32 +68,6 @@ public class Acelerometro implements SensorEventListener {
     //Alerta
     private void alerta() {
         Toast.makeText(context, "Para mejor experiencia usar My Life Diary en Vertical", Toast.LENGTH_SHORT).show();
-
-        /*AlertDialog.Builder alerta = new AlertDialog.Builder(context);
-        alerta.setTitle("Advertencia");
-        alerta.setMessage("Para mejor experiencia usar My Life Diary en Vertical");
-        alerta.setNegativeButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.cancel();
-            }
-        });
-        AlertDialog alertDialog = alerta.create();
-        alertDialog.show();*/
-    }
-
-    //Para ver si se mueve el dispositivo de izquierda a derecha para el cambio de historia
-    private void movimiento(float xAcc, float yAcc){
-        //Vertical
-        if (xAcc < -3 & banderaMovimiento == 0) {
-            banderaMovimiento++;
-        }
-        else if (xAcc > 3 & banderaMovimiento == 1){
-            banderaMovimiento++;
-        }
-        else if (banderaMovimiento == 2) {
-            //Implementar funcion para mover las historias
-        }
     }
 
     //Determinar si el dispositivo esta siendo robado y cerrar sesion
