@@ -6,7 +6,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,10 +22,12 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
+import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveChat;
 import com.sya.mylifediary.R;
 
 public class ChatActivity extends AppCompatActivity {
+    private SharedPreferences sharedPreferences;
     Button listen, listDevices, send;
     ListView listView;
     TextView box_canvas, status;
@@ -32,6 +36,7 @@ public class ChatActivity extends AppCompatActivity {
     BluetoothDevice [] btArray; // contiene todos los dispositivos
     String previusChat = "", currentMsg;
     SendReceiveChat sendReceive;
+    Acelerometro acelerometro;
     // variables para el Handler
     static final int STATE_LISTENING = 1;
     static final int STATE_CONNECTING = 2;
@@ -49,7 +54,10 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
+
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if(!bluetoothAdapter.isEnabled()){
@@ -67,6 +75,18 @@ public class ChatActivity extends AppCompatActivity {
         box_canvas = findViewById(R.id.canvas);
         status = findViewById(R.id.txtstatus);
         writeMsg = findViewById(R.id.editText);
+    }
+
+    @Override
+    protected void onPause() {
+        acelerometro.getSensorManager().unregisterListener(acelerometro);
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        acelerometro.iniciarSensor();
+        super.onRestart();
     }
 
     Handler handler = new Handler(new Handler.Callback() {

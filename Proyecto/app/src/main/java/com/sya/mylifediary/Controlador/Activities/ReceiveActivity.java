@@ -3,7 +3,9 @@ package com.sya.mylifediary.Controlador.Activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,11 +16,15 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.UUID;
+
+import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.ServerClassImage;
 import com.sya.mylifediary.R;
 
 public class ReceiveActivity extends AppCompatActivity {
+    Acelerometro acelerometro;
+    private SharedPreferences sharedPreferences;
     Button listen;
     TextView status;
     ImageView canvas;
@@ -41,6 +47,8 @@ public class ReceiveActivity extends AppCompatActivity {
         setContentView(R.layout.activity_receive);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -62,6 +70,18 @@ public class ReceiveActivity extends AppCompatActivity {
         listen = findViewById(R.id.buttonListen);
         canvas = findViewById(R.id.image);
         status = findViewById(R.id.txtstatus);
+    }
+
+    @Override
+    protected void onPause() {
+        acelerometro.getSensorManager().unregisterListener(acelerometro);
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        acelerometro.iniciarSensor();
+        super.onRestart();
     }
 
     Handler handler = new Handler(new Handler.Callback() {

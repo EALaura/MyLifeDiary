@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -24,10 +26,13 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
+import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
 import com.sya.mylifediary.R;
 
 public class ShareActivity extends AppCompatActivity {
+    private SharedPreferences sharedPreferences;
+    Acelerometro acelerometro;
     Button listDevices, send;
     ListView listView;
     TextView status;
@@ -50,8 +55,10 @@ public class ShareActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -59,14 +66,12 @@ public class ShareActivity extends AppCompatActivity {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
         }
-
         try {
             bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"));
             canvas.setImageBitmap(bitmap);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
         implementListeners();
     }
 
@@ -76,6 +81,18 @@ public class ShareActivity extends AppCompatActivity {
         listView = findViewById(R.id.listDevices);
         canvas = findViewById(R.id.image);
         status = findViewById(R.id.txtstatus);
+    }
+
+    @Override
+    protected void onPause() {
+        acelerometro.getSensorManager().unregisterListener(acelerometro);
+        super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        acelerometro.iniciarSensor();
+        super.onRestart();
     }
 
     Handler handler = new Handler(new Handler.Callback() {

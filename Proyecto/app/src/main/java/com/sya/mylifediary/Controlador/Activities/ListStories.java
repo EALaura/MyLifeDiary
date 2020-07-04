@@ -28,6 +28,7 @@ public class ListStories extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
 
         Story myStory = (Story) getIntent().getSerializableExtra("story");
         try {
@@ -39,12 +40,9 @@ public class ListStories extends AppCompatActivity {
 
         stories.add(myStory);
         initData();
-
         viewpager = findViewById(R.id.view);
         StoryAdapter adapter = new StoryAdapter(stories, this);
         viewpager.setAdapter(adapter);
-
-        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
     }
 
     @Override

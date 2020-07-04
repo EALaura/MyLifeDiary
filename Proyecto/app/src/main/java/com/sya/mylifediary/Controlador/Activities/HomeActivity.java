@@ -5,13 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
@@ -19,39 +17,29 @@ import com.sya.mylifediary.R;
 public class HomeActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
-    Button btnAdd, btnList, btnReceive, btnChat;
+    Button btnAdd, btnReceive, btnChat;
     Acelerometro acelerometro;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);  //flechita para atras
         getSupportActionBar().setIcon(R.mipmap.ic_myicon);  //poner el icono en la primera vista
 
         // busca el ya creado en el login x el mismo nombre string
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        btnAdd = findViewById(R.id.buttonAdd);
-        btnReceive = findViewById(R.id.buttonReceive);
-        btnChat = findViewById(R.id.buttonChat);
-        btnList = findViewById(R.id.buttonList);
+        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
 
-        //Se agrega el acelerometro
-        acelerometro = new Acelerometro(this, sharedPreferences);
+        findViewItems();
+        implementListeners();
+    }
 
+    private void implementListeners() {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, StoryActivity.class);
                 startActivity(intent);
-            }
-        });
-
-        btnList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /*Intent intent = new Intent(HomeActivity.this, ListStories.class);
-                startActivity(intent);*/
             }
         });
 
@@ -70,6 +58,12 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void findViewItems() {
+        btnAdd = findViewById(R.id.buttonAdd);
+        btnReceive = findViewById(R.id.buttonReceive);
+        btnChat = findViewById(R.id.buttonChat);
     }
 
     @Override

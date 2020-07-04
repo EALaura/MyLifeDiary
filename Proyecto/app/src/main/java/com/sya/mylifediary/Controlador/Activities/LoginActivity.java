@@ -35,6 +35,11 @@ public class LoginActivity extends AppCompatActivity {
         bindUI();
         // las preferencias privadas no se comparte con otras aplicaciones
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+
+        implementListeners();
+    }
+
+    private void implementListeners() {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -22,10 +22,10 @@
                 android:value=".Controlador.Activities.HomeActivity" />
         </activity>
         <activity android:name=".Controlador.Activities.ShareActivity"
-            android:parentActivityName=".Controlador.Activities.ListStories" >
+            android:parentActivityName=".Controlador.Activities.HomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Controlador.Activities.ListStories" />
+                android:value=".Controlador.Activities.HomeActivity" />
         </activity>
         <activity android:name=".Controlador.Activities.ReceiveActivity"
             android:parentActivityName=".Controlador.Activities.HomeActivity" >
@@ -57,7 +57,6 @@
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

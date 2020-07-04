@@ -3,6 +3,7 @@ package com.sya.mylifediary.Controlador.Activities;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,6 +21,7 @@ import android.util.Log;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Model.Story;
@@ -28,7 +30,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 
 public class StoryActivity extends AppCompatActivity{
-
+    private SharedPreferences sharedPreferences;
+    Acelerometro acelerometro;
     private static final String TAG = "MainActivity";
     private LocationBroadcastReceiver broadcastReceiver;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
@@ -108,7 +111,9 @@ public class StoryActivity extends AppCompatActivity{
 
     @Override
     protected void onResume() {
-        super.onResume();   // filtro de tipo key
+        super.onResume();
+        sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         if (broadcastReceiver != null) {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(LocationManager.KEY_LOCATION_CHANGED);
@@ -120,8 +125,15 @@ public class StoryActivity extends AppCompatActivity{
     // no se reciban lecturas en background
     @Override
     protected void onPause() {
+        acelerometro.getSensorManager().unregisterListener(acelerometro);
         unregisterReceiver(broadcastReceiver);
         super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        acelerometro.iniciarSensor();
+        super.onRestart();
     }
 
     @Override
