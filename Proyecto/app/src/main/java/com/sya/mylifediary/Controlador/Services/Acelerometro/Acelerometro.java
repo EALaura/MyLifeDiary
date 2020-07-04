@@ -17,7 +17,6 @@ public class Acelerometro implements SensorEventListener {
     private SensorManager sensorManager;
     private Sensor acelerometro;
     private int banderaOrientacion;
-    private int banderaMovimiento;
     private static final float ALPHA = 0.8f;
     private float mHighPassX = 0;
     private float mHighPassY = 0;
@@ -33,6 +32,7 @@ public class Acelerometro implements SensorEventListener {
         iniciarSensor();
     }
 
+    // Inicializa el sensor de tipo acelerometro
     public void iniciarSensor(){
         sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
         acelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -57,7 +57,7 @@ public class Acelerometro implements SensorEventListener {
         if (yAcc > 7 | yAcc < -7) {
             banderaOrientacion = 0;
         }
-        else if ((xAcc > 7 | xAcc < -7)){ /*& (yAcc < 2 | yAcc > -2))*/
+        else if ((xAcc > 7 | xAcc < -7)){
             banderaOrientacion++;
             if (banderaOrientacion == 1){
                 alerta();
@@ -65,12 +65,12 @@ public class Acelerometro implements SensorEventListener {
         }
     }
 
-    //Alerta
+    // Muestra un mensaje de Alerta
     private void alerta() {
         Toast.makeText(context, "Para mejor experiencia usar My Life Diary en Vertical", Toast.LENGTH_SHORT).show();
     }
 
-    //Determinar si el dispositivo esta siendo robado y cerrar sesion
+    //Determinar si el dispositivo esta siendo robado por el movimiento y cerrar sesion
     private void peligro(float xAcc, float yAcc, float zAcc){
         mHighPassX = highPass(xAcc, mLastX, mHighPassX);
         mHighPassY = highPass(yAcc, mLastY, mHighPassY);
@@ -81,24 +81,24 @@ public class Acelerometro implements SensorEventListener {
 
         double aceleracion = aceleracionTotal(mHighPassX, mHighPassY, mHighPassZ);
         Log.d("Sensor Acelerometro", " X: " + mHighPassX + ", \tY: " + mHighPassY + ", \t Z: " + mHighPassZ + ", \t Ac. Total: " + aceleracion);
-        /*Toast toast = Toast.makeText(MainActivity.getContext(),aceleracion + " ac", Toast.LENGTH_SHORT );
-        toast.show();*/
-        if (aceleracion > 50) {  // hay un forsejeo por robo
-            // MainActivity.text.setText("ac"+ aceleracion);
-            //Toast toast1 = Toast.makeText(MainActivity.getContext(),"ME ROBAN!!!", Toast.LENGTH_SHORT );
-            //toast1.show();
+
+        // Si hay un forsejeo por robo
+        if (aceleracion > 50) {
             logOut();
         }
     }
 
+    // Filtro de highPass
     private float highPass(float current, float last, float filtered) {
         return ALPHA * (filtered + current - last);
     }
 
+    // Aceleracion Total del dispositivo
     private double aceleracionTotal(float x, float y, float z) {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
     }
 
+    // Metodo para cerrar sesion
     private void logOut(){
         Util.removeSharedPreferences(share);
         Intent intent = new Intent(context, LoginActivity.class);
