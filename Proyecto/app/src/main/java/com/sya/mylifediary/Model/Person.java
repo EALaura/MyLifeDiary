@@ -1,10 +1,10 @@
 package com.sya.mylifediary.Model;
 
 public class Person {
-    String name;
-    String email;
-    String user;
-    String password;
+    public String name;
+    public String email;
+    public String user;
+    public String password;
 
     public String getName() {
         return name;

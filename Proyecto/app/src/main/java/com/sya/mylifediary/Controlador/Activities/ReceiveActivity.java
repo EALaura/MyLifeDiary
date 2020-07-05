@@ -2,6 +2,7 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.util.UUID;
 
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
@@ -23,13 +25,13 @@ import com.sya.mylifediary.Controlador.Services.Bluetooth.ServerClassImage;
 import com.sya.mylifediary.R;
 
 public class ReceiveActivity extends AppCompatActivity {
-    Acelerometro acelerometro;
+    public Acelerometro acelerometro;
     private SharedPreferences sharedPreferences;
-    Button listen;
-    TextView status;
-    ImageView canvas;
-    BluetoothAdapter bluetoothAdapter;
-    SendReceiveImage sendReceive;
+    public Button listen;
+    public TextView status;
+    public ImageView canvas;
+    public BluetoothAdapter bluetoothAdapter;
+    public SendReceiveImage sendReceive;
     // variables para el Handler
     static final int STATE_LISTENING = 1;
     static final int STATE_CONNECTING = 2;
@@ -52,7 +54,7 @@ public class ReceiveActivity extends AppCompatActivity {
         findViewItems();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if(!bluetoothAdapter.isEnabled()){
+        if (!bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
         }
@@ -66,6 +68,7 @@ public class ReceiveActivity extends AppCompatActivity {
         });
     }
 
+    // Enlazar con la interfaz
     private void findViewItems() {
         listen = findViewById(R.id.buttonListen);
         canvas = findViewById(R.id.image);
@@ -84,21 +87,26 @@ public class ReceiveActivity extends AppCompatActivity {
         super.onRestart();
     }
 
+    // Estados de acuerdo a la conexion
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case STATE_LISTENING:
-                    status.setText("Escuchando"); break;
+                    status.setText("Escuchando");
+                    break;
                 case STATE_CONNECTING:
-                    status.setText("Conectando"); break;
+                    status.setText("Conectando");
+                    break;
                 case STATE_CONNECTED:
-                    status.setText("Conectado"); break;
+                    status.setText("Conectado");
+                    break;
                 case STATE_CONECTION_FAILED:
-                    status.setText("Error"); break;
+                    status.setText("Error");
+                    break;
                 case STATE_MESSAGE_RECEIVED:
-                    byte [] readBuffer = (byte[]) msg.obj;
-                    Bitmap bitmap =  BitmapFactory.decodeByteArray(readBuffer, 0, msg.arg1);
+                    byte[] readBuffer = (byte[]) msg.obj;
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(readBuffer, 0, msg.arg1);
                     canvas.setImageBitmap(bitmap);
                     break;
             }

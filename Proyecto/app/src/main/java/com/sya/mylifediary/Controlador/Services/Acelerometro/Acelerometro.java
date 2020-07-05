@@ -9,6 +9,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.sya.mylifediary.Controlador.Activities.LoginActivity;
 import com.sya.mylifediary.Controlador.Utils.Util;
 
@@ -26,15 +27,16 @@ public class Acelerometro implements SensorEventListener {
     private float mLastZ = 0;
     private SharedPreferences share;
 
-    public Acelerometro(Context context, SharedPreferences share){
+    // Constructor del Acelerometro, recibe el contexto y los datos de sesion
+    public Acelerometro(Context context, SharedPreferences share) {
         this.context = context;
         this.share = share;
         iniciarSensor();
     }
 
     // Inicializa el sensor de tipo acelerometro
-    public void iniciarSensor(){
-        sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
+    public void iniciarSensor() {
+        sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         acelerometro = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, acelerometro, SensorManager.SENSOR_DELAY_NORMAL);
         banderaOrientacion = 0;
@@ -56,10 +58,9 @@ public class Acelerometro implements SensorEventListener {
     private void orientacion(float xAcc, float yAcc) {
         if (yAcc > 7 | yAcc < -7) {
             banderaOrientacion = 0;
-        }
-        else if ((xAcc > 7 | xAcc < -7)){
+        } else if ((xAcc > 7 | xAcc < -7)) {
             banderaOrientacion++;
-            if (banderaOrientacion == 1){
+            if (banderaOrientacion == 1) {
                 alerta();
             }
         }
@@ -71,7 +72,7 @@ public class Acelerometro implements SensorEventListener {
     }
 
     //Determinar si el dispositivo esta siendo robado por el movimiento y cerrar sesion
-    private void peligro(float xAcc, float yAcc, float zAcc){
+    private void peligro(float xAcc, float yAcc, float zAcc) {
         mHighPassX = highPass(xAcc, mLastX, mHighPassX);
         mHighPassY = highPass(yAcc, mLastY, mHighPassY);
         mHighPassZ = highPass(zAcc, mLastZ, mHighPassZ);
@@ -100,17 +101,19 @@ public class Acelerometro implements SensorEventListener {
     }
 
     // Metodo para cerrar sesion
-    private void logOut(){
+    private void logOut() {
         Util.removeSharedPreferences(share);
         Intent intent = new Intent(context, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
     }
 
-    public SensorManager getSensorManager(){
+    // Devuelve el sensorManager
+    public SensorManager getSensorManager() {
         return sensorManager;
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int i) { }
+    public void onAccuracyChanged(Sensor sensor, int i) {
+    }
 }

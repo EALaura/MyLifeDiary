@@ -2,6 +2,7 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -20,27 +21,29 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
+
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
 import com.sya.mylifediary.R;
 
 public class ShareActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
-    Acelerometro acelerometro;
-    Button listDevices, send;
-    ListView listView;
-    TextView status;
-    ImageView canvas;
-    Bitmap bitmap;
-    BluetoothAdapter bluetoothAdapter;
-    BluetoothDevice [] btArray; // contiene todos los dispositivos
-    SendReceiveImage sendReceive;
+    public Acelerometro acelerometro;
+    public Button listDevices, send;
+    public ListView listView;
+    public TextView status;
+    public ImageView canvas;
+    public Bitmap bitmap;
+    public BluetoothAdapter bluetoothAdapter;
+    public BluetoothDevice[] btArray; // contiene todos los dispositivos
+    public SendReceiveImage sendReceive;
     // variables para el Handler
     static final int STATE_LISTENING = 1;
     static final int STATE_CONNECTING = 2;
@@ -62,7 +65,8 @@ public class ShareActivity extends AppCompatActivity {
         findViewItems();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if(!bluetoothAdapter.isEnabled()){
+        // Si el bluetooth esta desactivado se le pide que active
+        if (!bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
         }
@@ -75,6 +79,7 @@ public class ShareActivity extends AppCompatActivity {
         implementListeners();
     }
 
+    // Enlaza con la interfaz
     private void findViewItems() {
         send = findViewById(R.id.buttonSend);
         listDevices = findViewById(R.id.buttonDevices);
@@ -95,21 +100,26 @@ public class ShareActivity extends AppCompatActivity {
         super.onRestart();
     }
 
+    // Estados de acuerdo a la conexion
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case STATE_LISTENING:
-                    status.setText("Escuchando"); break;
+                    status.setText("Escuchando");
+                    break;
                 case STATE_CONNECTING:
-                    status.setText("Conectando"); break;
+                    status.setText("Conectando");
+                    break;
                 case STATE_CONNECTED:
-                    status.setText("Conectado"); break;
+                    status.setText("Conectado");
+                    break;
                 case STATE_CONECTION_FAILED:
-                    status.setText("Error"); break;
+                    status.setText("Error");
+                    break;
                 case STATE_MESSAGE_RECEIVED:
-                    byte [] readBuffer = (byte[]) msg.obj;
-                    Bitmap bitmap =  BitmapFactory.decodeByteArray(readBuffer, 0, msg.arg1);
+                    byte[] readBuffer = (byte[]) msg.obj;
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(readBuffer, 0, msg.arg1);
                     canvas.setImageBitmap(bitmap);
                     break;
             }
@@ -117,12 +127,15 @@ public class ShareActivity extends AppCompatActivity {
         }
     });
 
+    // Funcionalidades de los botones
     private void implementListeners() {
+
+        //Lista los dispositivos encontrados con el bluetooth activado
         listDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
-                String [] devices = new String[bluetoothDevices.size()];
+                String[] devices = new String[bluetoothDevices.size()];
                 btArray = new BluetoothDevice[bluetoothDevices.size()];
                 int index = 0;
                 if (bluetoothDevices.size() > 0) {
@@ -138,6 +151,8 @@ public class ShareActivity extends AppCompatActivity {
             }
         });
 
+        // Cuando se hace click sobre un nombre de la lista de dispositivos,
+        // se inicia el proceso Cliente y se establece la coneccion
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -147,29 +162,39 @@ public class ShareActivity extends AppCompatActivity {
             }
         });
 
+        /*
+         * La imagen debe comprimirse al enviar y se envía por subarrays (por partes),
+         * mediante otro proceso sendReceive se escribe los datos que se van enviando por cada
+         * iteración según el tamaño de la imagen, el envio dura aproximadamente un minuto
+         */
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
-                byte [] imageBytes = stream.toByteArray();
+                byte[] imageBytes = stream.toByteArray();
 
                 int subArraySize = 400;
                 sendReceive.write(String.valueOf(imageBytes.length).getBytes());
                 // para enviar los subarrays
-                for(int i = 0; i < imageBytes.length; i += subArraySize){
-                    byte [] tempArray = Arrays.copyOfRange(imageBytes, i, Math.min(imageBytes.length, i + subArraySize));
+                for (int i = 0; i < imageBytes.length; i += subArraySize) {
+                    byte[] tempArray = Arrays.copyOfRange(imageBytes, i, Math.min(imageBytes.length, i + subArraySize));
                     sendReceive.write(tempArray);
                 }
             }
         });
     }
 
-    private class ClientClass extends Thread{
+    /*
+     * La clase ClientClass es el proceso que se inicia con el BluetoothSocket y se inicia
+     * para establecer la comunicación con su propio sendReceive y conectar con el
+     * sendReceive del Server:
+     */
+    private class ClientClass extends Thread {
         private BluetoothDevice device;
         private BluetoothSocket socket;
 
-        public ClientClass(BluetoothDevice device){
+        public ClientClass(BluetoothDevice device) {
             this.device = device;
             try {
                 socket = device.createRfcommSocketToServiceRecord(MY_UUID);
@@ -177,7 +202,8 @@ public class ShareActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        public void run(){
+
+        public void run() {
             try {
                 socket.connect();
                 Message message = Message.obtain();

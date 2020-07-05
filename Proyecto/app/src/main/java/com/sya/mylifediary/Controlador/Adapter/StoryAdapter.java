@@ -12,20 +12,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sya.mylifediary.Controlador.Activities.ShareActivity;
 import com.sya.mylifediary.Model.Story;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.List;
+
 import com.sya.mylifediary.R;
 
 public class StoryAdapter extends PagerAdapter {
-
-    List<Story> listStories;
-    Context context;
+    public List<Story> listStories;
+    public Context context;
 
     public StoryAdapter(List<Story> movieList, Context context) {
         this.listStories = movieList;
@@ -44,7 +47,7 @@ public class StoryAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        container.removeView((View)object);
+        container.removeView((View) object);
     }
 
     @NonNull
@@ -106,12 +109,12 @@ public class StoryAdapter extends PagerAdapter {
 
     public static Bitmap getBitmapFromView(View view) {
         //Define a bitmap with the same size as the view
-        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(),Bitmap.Config.ARGB_8888);
+        Bitmap returnedBitmap = Bitmap.createBitmap(view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888);
         //Bind a canvas to it
         Canvas canvas = new Canvas(returnedBitmap);
         //Get the view's background
-        Drawable bgDrawable =view.getBackground();
-        if (bgDrawable!=null)
+        Drawable bgDrawable = view.getBackground();
+        if (bgDrawable != null)
             //has background drawable, then draw it on the canvas
             bgDrawable.draw(canvas);
         else

@@ -12,24 +12,27 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.text.TextUtils;
 import android.util.Log;
+
 import androidx.core.content.ContextCompat;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class LocationBroadcastReceiver extends BroadcastReceiver{
-
+public class LocationBroadcastReceiver extends BroadcastReceiver {
     private String TAG = "LocationBroadcastReceiver";
     private StoryActivityInf storyActivityInf;
     private Context context;
     private String address;
 
-    public LocationBroadcastReceiver(StoryActivityInf mainActivityInf, Context context){
+    // Constructor
+    public LocationBroadcastReceiver(StoryActivityInf mainActivityInf, Context context) {
         this.storyActivityInf = mainActivityInf;
         this.context = context;
     }
 
+    // Detecta si hay cambios en las coordenadas
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
@@ -39,14 +42,19 @@ public class LocationBroadcastReceiver extends BroadcastReceiver{
             Location location = (Location) intent.getExtras().get(locationKey);
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
-            Log.d(TAG,  "latitud: " + latitude + ", " + "longitud: " + longitude);
+            Log.d(TAG, "latitud: " + latitude + ", " + "longitud: " + longitude);
             address = convertToAddress(longitude, latitude);
             storyActivityInf.DisplayLocationChange(address);
         }
     }
 
+    /*
+    * Inicializa el LocationManager mediante un pendingIntent especifica una acción
+    * a tomar en el futuro. Le permite pasar un intent futuro a requestLocationUpdates
+    * y permitir que la aplicación ejecute ese intent.
+     */
     public void initGPS() {
-        // enviara directamente el mensaje al LOcation broadcast receiver, llamado implicito
+        // Envia directamente el mensaje al Location broadcast receiver, llamado implicito
         Intent intent = new Intent((LocationManager.KEY_LOCATION_CHANGED));
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -58,6 +66,7 @@ public class LocationBroadcastReceiver extends BroadcastReceiver{
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, pendingIntent);
     }
 
+    // Convierte las coordenadas a una direccion real
     private String convertToAddress(double longitude, double latitude) {
         String addressText = null;
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());

@@ -7,7 +7,7 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        // Que muestre la imagen de carga x 2.5 segundos
+        // Muestra la imagen de carga por 2 segundos.
         SystemClock.sleep(2000);
     }
 }

@@ -2,6 +2,7 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -19,24 +20,27 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
+
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveChat;
 import com.sya.mylifediary.R;
 
 public class ChatActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
-    Button listen, listDevices, send;
-    ListView listView;
-    TextView box_canvas, status;
-    EditText writeMsg;
-    BluetoothAdapter bluetoothAdapter;
-    BluetoothDevice [] btArray; // contiene todos los dispositivos
-    String previusChat = "", currentMsg;
-    SendReceiveChat sendReceive;
-    Acelerometro acelerometro;
+    public Button listen, listDevices, send;
+    public ListView listView;
+    public TextView box_canvas, status;
+    public EditText writeMsg;
+    public BluetoothAdapter bluetoothAdapter;
+    public BluetoothDevice[] btArray; // contiene todos los dispositivos
+    public String previusChat = "", currentMsg;
+    public SendReceiveChat sendReceive;
+    public Acelerometro acelerometro;
+
     // variables para el Handler
     static final int STATE_LISTENING = 1;
     static final int STATE_CONNECTING = 2;
@@ -60,13 +64,14 @@ public class ChatActivity extends AppCompatActivity {
 
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if(!bluetoothAdapter.isEnabled()){
+        if (!bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
         }
         implementListeners();
     }
 
+    //Enlazar con la interfaz
     private void findViewItems() {
         listen = findViewById(R.id.buttonListen);
         send = findViewById(R.id.buttonSend);
@@ -92,17 +97,21 @@ public class ChatActivity extends AppCompatActivity {
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case STATE_LISTENING:
-                    status.setText("Escuchando"); break;
+                    status.setText("Escuchando");
+                    break;
                 case STATE_CONNECTING:
-                    status.setText("Conectando"); break;
+                    status.setText("Conectando");
+                    break;
                 case STATE_CONNECTED:
-                    status.setText("Conectado"); break;
+                    status.setText("Conectado");
+                    break;
                 case STATE_CONECTION_FAILED:
-                    status.setText("Error"); break;
+                    status.setText("Error");
+                    break;
                 case STATE_MESSAGE_RECEIVED:
-                    byte [] readBuffer = (byte[]) msg.obj;
+                    byte[] readBuffer = (byte[]) msg.obj;
                     String tempMsg = new String(readBuffer, 0, msg.arg1);
                     previusChat = previusChat + tempMsg;
                     box_canvas.setText(previusChat);
@@ -112,12 +121,13 @@ public class ChatActivity extends AppCompatActivity {
         }
     });
 
+    // Funcionalidades de los botones
     private void implementListeners() {
         listDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
-                String [] devices = new String[bluetoothDevices.size()];
+                String[] devices = new String[bluetoothDevices.size()];
                 btArray = new BluetoothDevice[bluetoothDevices.size()];
                 int index = 0;
                 if (bluetoothDevices.size() > 0) {
@@ -163,9 +173,10 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
-    private class ServerClass extends Thread{
+    private class ServerClass extends Thread {
         private BluetoothServerSocket serverSocket;
-        public ServerClass(){
+
+        public ServerClass() {
             try {
                 serverSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(APP_NAME, MY_UUID);
             } catch (IOException e) {
@@ -173,9 +184,9 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
 
-        public void run(){
+        public void run() {
             BluetoothSocket socket = null;
-            while(socket == null){
+            while (socket == null) {
                 try {
                     Message message = Message.obtain();
                     message.what = STATE_CONNECTING;
@@ -187,7 +198,7 @@ public class ChatActivity extends AppCompatActivity {
                     message.what = STATE_CONECTION_FAILED;
                     handler.sendMessage(message);
                 }
-                if (socket != null){
+                if (socket != null) {
                     Message message = Message.obtain();
                     message.what = STATE_CONNECTED;
                     handler.sendMessage(message);
@@ -200,11 +211,11 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    private class ClientClass extends Thread{
+    private class ClientClass extends Thread {
         private BluetoothDevice device;
         private BluetoothSocket socket;
 
-        public ClientClass(BluetoothDevice device){
+        public ClientClass(BluetoothDevice device) {
             this.device = device;
             try {
                 socket = device.createRfcommSocketToServiceRecord(MY_UUID);
@@ -212,7 +223,8 @@ public class ChatActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        public void run(){
+
+        public void run() {
             try {
                 socket.connect();
                 Message message = Message.obtain();

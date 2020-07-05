@@ -2,6 +2,7 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,15 +11,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
 public class HomeActivity extends AppCompatActivity {
-
     private SharedPreferences sharedPreferences;
-    Button btnAdd, btnReceive, btnChat;
-    Acelerometro acelerometro;
+    public Button btnAdd, btnReceive, btnChat;
+    public Acelerometro acelerometro;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,7 +28,7 @@ public class HomeActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_myicon);  //poner el icono en la primera vista
 
-        // busca el ya creado en el login x el mismo nombre string
+        // Busca el ya creado en el login por el mismo nombre string
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
 
@@ -34,6 +36,7 @@ public class HomeActivity extends AppCompatActivity {
         implementListeners();
     }
 
+    //Funcionalidades de los botones
     private void implementListeners() {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +63,7 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    // Enlazar con la interfaz
     private void findViewItems() {
         btnAdd = findViewById(R.id.buttonAdd);
         btnReceive = findViewById(R.id.buttonReceive);
@@ -86,7 +90,7 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_logout:
                 logOut();
                 return true;
@@ -95,7 +99,8 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    private void logOut(){
+    // Metodo para Cerrar Sesion del Usuario
+    private void logOut() {
         Util.removeSharedPreferences(sharedPreferences);
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

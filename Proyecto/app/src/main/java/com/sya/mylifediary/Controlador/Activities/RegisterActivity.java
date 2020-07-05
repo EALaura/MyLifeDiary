@@ -7,20 +7,21 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.sya.mylifediary.R;
 
 public class RegisterActivity extends AppCompatActivity {
+    public Button btnRegister;
+    public Button btnCancel;
 
-    Button btnRegister;
-    Button btnCancel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        findViewItems();
 
-        btnRegister = findViewById(R.id.buttonSave);
-        btnCancel = findViewById(R.id.buttonCancel);
+
         final Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,5 +37,12 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+    }
+
+    //Enlazar con la interfaz
+    private void findViewItems() {
+        btnRegister = findViewById(R.id.buttonSave);
+        btnCancel = findViewById(R.id.buttonCancel);
     }
 }

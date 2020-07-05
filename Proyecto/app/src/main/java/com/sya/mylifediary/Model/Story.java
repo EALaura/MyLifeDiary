@@ -1,10 +1,10 @@
 package com.sya.mylifediary.Model;
 
 import android.graphics.Bitmap;
+
 import java.io.Serializable;
 
 public class Story implements Serializable {
-
     private String title;
     private String location;
     private String description;

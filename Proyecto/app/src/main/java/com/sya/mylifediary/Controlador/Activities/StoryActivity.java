@@ -2,6 +2,7 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -19,28 +20,31 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 
-public class StoryActivity extends AppCompatActivity{
+public class StoryActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
-    Acelerometro acelerometro;
+    public Acelerometro acelerometro;
     private static final String TAG = "MainActivity";
     private LocationBroadcastReceiver broadcastReceiver;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
-    TextView textAddress;
-    ImageView image;
-    EditText titleText, descriptionText;
-    Button camera, save;
-    String title, location, description;
-    Bitmap bitmap;
+    public TextView textAddress;
+    public ImageView image;
+    public EditText titleText, descriptionText;
+    public Button camera, save;
+    public String title, location, description;
+    public Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +69,9 @@ public class StoryActivity extends AppCompatActivity{
             public void onClick(View v) {
                 title = titleText.getText().toString();
                 description = descriptionText.getText().toString();
-                if (title.equals("")){
+                if (title.equals("")) {
                     titleText.setError("Required");
-                } else if(description.equals("")) {
+                } else if (description.equals("")) {
                     descriptionText.setError("Required");
                 } else {
                     saveStory();
@@ -76,6 +80,7 @@ public class StoryActivity extends AppCompatActivity{
         });
     }
 
+    // Enlaza con la interfaz
     private void findViewItems() {
         textAddress = findViewById(R.id.textAddress);
         image = findViewById(R.id.photo);
@@ -85,6 +90,7 @@ public class StoryActivity extends AppCompatActivity{
         save = findViewById(R.id.buttonStory);
     }
 
+    // Metodo para guardar la historia
     private void saveStory() {
         createImageFromBitmap(bitmap);
         Story story = new Story(title, location, description, null);
@@ -122,7 +128,7 @@ public class StoryActivity extends AppCompatActivity{
             Log.d(TAG, "broadcastReceiver is null");
         }
     }
-    // no se reciban lecturas en background
+
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
@@ -139,13 +145,14 @@ public class StoryActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        bitmap = (Bitmap)data.getExtras().get("data");   //Captura la imagen obtenida de la camara
+        bitmap = (Bitmap) data.getExtras().get("data");   //Captura la imagen obtenida de la camara
         image.setImageBitmap(bitmap);
     }
 
+    // Permisos para usar la Localizacion
     public boolean checkLocationPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+                Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
         return true;
     }
 
@@ -169,7 +176,7 @@ public class StoryActivity extends AppCompatActivity{
     private StoryActivityInf storyActivityInf = new StoryActivityInf() {
         @Override
         public void DisplayLocationChange(String address) {
-            Log.d(TAG,  "Mi ubicacion: " + address);
+            Log.d(TAG, "Mi ubicacion: " + address);
             textAddress.setText(address);
             location = address;
         }
