@@ -85,6 +85,7 @@ public class Acelerometro implements SensorEventListener {
         // Si hay un forsejeo por robo
         if (aceleracion > 50) {
             logOut();
+            Log.d("Sensor Acelerometro", "CERRAR SESIÓN , Aceleración Total" + aceleracion);
         }
     }
 
