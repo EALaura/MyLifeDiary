@@ -1,7 +1,6 @@
 package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,9 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
-
 import com.sya.mylifediary.R;
 
+/* Login Activity es la primera activity que se muestra al usuario por primera vez
+*  o cuando cierra sesión, ingresara su correo y contraseña validos o se registrará */
 public class LoginActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private EditText textEmail;
@@ -37,11 +37,12 @@ public class LoginActivity extends AppCompatActivity {
         bindUI();
         // las preferencias privadas no se comparte con otras aplicaciones
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-
         implementListeners();
     }
 
+    // Son los botones de la activity
     private void implementListeners() {
+        // Al logearse redirigira al Home de la aplicación
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +54,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
+        // Para registrar dirige a una actividad de registro
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
+        // Salir cierra la aplicacion
         btnOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
+    // Enlaza con los datos de la interfaz
     private void bindUI() {
         textEmail = findViewById(R.id.textEmail);
         textPass = findViewById(R.id.textPass);
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.buttonRegister);
         btnOut = findViewById(R.id.buttonOut);
     }
-
+    // Si es swith de recordar está activado guardara los datos de sesión
     private void saveOnPreferences(String email, String password) {
         if (switchRemember.isChecked()) {
             // se crea un editor para añadir info, sharedPreferences declarado es solo de lectura
@@ -89,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
             editor.apply();
         }
     }
-
+    // valida que el formato sea de email y la contraseña mayor a 4 digitos
     private boolean logIn(String email, String password) {
         if (!isValidEmail(email)) {
             Toast.makeText(this, "Email invalido, por favor intenta otra vez", Toast.LENGTH_SHORT).show();
@@ -111,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         // Que la longitud sea mayor a 4
         return password.length() >= 4;
     }
-
+    // Manejo de flag para redirigir al Home de la app
     private void goToHome() {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         // Para que no permita regresar a esta vista una vez que se ha logeado, sino cerrar la app

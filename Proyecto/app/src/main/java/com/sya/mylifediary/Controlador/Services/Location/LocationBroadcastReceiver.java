@@ -12,27 +12,29 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.text.TextUtils;
 import android.util.Log;
-
 import androidx.core.content.ContextCompat;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/* Por medio de la implementación del BroadcastReceiver se recibe los cambios de
+   Location mediante el LocationManager. Cuando se le crea se necesita especificar la
+   interfaz que devuelve los datos a la activity y el contexto del activity */
 public class LocationBroadcastReceiver extends BroadcastReceiver {
     private String TAG = "LocationBroadcastReceiver";
     private StoryActivityInf storyActivityInf;
     private Context context;
     private String address;
 
-    // Constructor
+    /* Constructor, mainActivityInf es el objeto en el que retornara la dirección al activity,
+       context es la referencia al activity que llama a esta clase */
     public LocationBroadcastReceiver(StoryActivityInf mainActivityInf, Context context) {
         this.storyActivityInf = mainActivityInf;
         this.context = context;
     }
 
-    // Detecta si hay cambios en las coordenadas
+    /* Detecta si hay cambios de ubicación, entonces captura los datos de latitud y longitud.*/
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
@@ -66,7 +68,11 @@ public class LocationBroadcastReceiver extends BroadcastReceiver {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, pendingIntent);
     }
 
-    // Convierte las coordenadas a una direccion real
+    /* Convierte las coordenadas a una dirección real para que el usuario lo entienda
+    *  Usa el paquete Geocoder y retorna un String de la dirección exacta.
+    * Se hacen las validaciones necesarias si se encuentra algunos errores al momento de
+    * convertir la dirección como errores de red, valores inválidos de longitud y latitud,
+    *  si no se convierte las coordenadas en una dirección */
     private String convertToAddress(double longitude, double latitude) {
         String addressText = null;
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
@@ -74,26 +80,26 @@ public class LocationBroadcastReceiver extends BroadcastReceiver {
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
         } catch (IOException ioException) {
-            // Network or other I/O issues
+            // Porblemas de redes
             Log.e(TAG, "network_service_error", ioException);
         } catch (IllegalArgumentException illegalArgumentException) {
-            // Invalid long / lat
+            // Invalidos valores de long/ lat
             Log.e(TAG, "invalid_long_lat" + ". " + "Latitude = " + latitude + ", Longitude = " + longitude, illegalArgumentException);
         }
-        // No address was found
+        // Si no se encontró la dirección
         if (addresses == null || addresses.size() == 0) {
             Log.e(TAG, "no_address_found");
         } else {
             Address address = addresses.get(0);
             ArrayList<String> addressFragments = new ArrayList<>();
 
-            // Fetch the address lines, join them, and return to thread
+            // Une los datos en una sola dirección
             for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
                 addressFragments.add(address.getAddressLine(i));
             }
             Log.i(TAG, "address_found");
             addressText = TextUtils.join(System.getProperty("line.separator"), addressFragments);
         }
-        return addressText;
+        return addressText;     // retorna la dirección como un string
     }
 }

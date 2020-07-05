@@ -2,7 +2,6 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,11 +10,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
+/* Es la primera actividad que se muestra despues del logeo,
+*  Muestra los botones para las demás funciones de la aplicación,
+*  usa sharedPreferences para datos de sesion y un acelerometro */
 public class HomeActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     public Button btnAdd, btnReceive, btnChat;
@@ -40,7 +41,7 @@ public class HomeActivity extends AppCompatActivity {
     private void implementListeners() {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {   // Agregar nueva historia
                 Intent intent = new Intent(HomeActivity.this, StoryActivity.class);
                 startActivity(intent);
             }
@@ -48,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
 
         btnReceive.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {   // Recibir una historia
                 Intent intent = new Intent(HomeActivity.this, ReceiveActivity.class);
                 startActivity(intent);
             }
@@ -56,7 +57,7 @@ public class HomeActivity extends AppCompatActivity {
 
         btnChat.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v) {   // Iniciar Chat
                 Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
                 startActivity(intent);
             }
@@ -69,25 +70,25 @@ public class HomeActivity extends AppCompatActivity {
         btnReceive = findViewById(R.id.buttonReceive);
         btnChat = findViewById(R.id.buttonChat);
     }
-
+    // Cuando la activity esta en background se detienen las lecturas del acelerometro
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
         super.onPause();
     }
-
+    // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
         acelerometro.iniciarSensor();
         super.onRestart();
     }
-
+    // Es la unica vista con el menu activado para Cerrar sesión
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
+    // La opción de cerrar sesión:
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -99,7 +100,7 @@ public class HomeActivity extends AppCompatActivity {
         }
     }
 
-    // Metodo para Cerrar Sesion del Usuario
+    // Metodo para Cerrar Sesion del Usuario, borra las sharedPreferences existentes
     private void logOut() {
         Util.removeSharedPreferences(sharedPreferences);
         Intent intent = new Intent(this, LoginActivity.class);

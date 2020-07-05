@@ -81,6 +81,7 @@ public class Acelerometro implements SensorEventListener {
         mLastZ = zAcc;
 
         double aceleracion = aceleracionTotal(mHighPassX, mHighPassY, mHighPassZ);
+        // Se tendran lecturas constantes dependiendo de que activity este activo el acelerometro:
         Log.d("Sensor Acelerometro", " X: " + mHighPassX + ", \tY: " + mHighPassY + ", \t Z: " + mHighPassZ + ", \t Ac. Total: " + aceleracion);
 
         // Si hay un forsejeo por robo

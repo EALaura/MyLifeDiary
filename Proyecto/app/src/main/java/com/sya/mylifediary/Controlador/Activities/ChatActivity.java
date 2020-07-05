@@ -2,7 +2,6 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -20,15 +19,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
-
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveChat;
 import com.sya.mylifediary.R;
 
+/* La clase ChatActivity permite el intercambio de mensajes entre dos moviles,
+*  ambos debes inicializar los procesos de Cliente y Servidor a la vez, establecen un socket
+*  de conexion y permite el intercambio de mensajes por un objeto sendReceiveChat*/
 public class ChatActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     public Button listen, listDevices, send;
@@ -49,21 +49,20 @@ public class ChatActivity extends AppCompatActivity {
     static final int STATE_MESSAGE_RECEIVED = 5;
 
     int REQUEST_ENABLE_BLUETOOTH = 1;
-    private static final String APP_NAME = "MyLifeDiary";
-    private static final UUID MY_UUID = UUID.fromString("19b29419-3b3e-4d87-aefd-2488b6e8dd3b");
+    private static final String APP_NAME = "MyLifeDiary";   // nombre de la aplicacion
+    private static final UUID MY_UUID = UUID.fromString("19b29419-3b3e-4d87-aefd-2488b6e8dd3b");    // ID de identificacion
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
-
+        // inicializa el Bluetooth adapter
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
+        // si Bluetooth no está activado pedirá permiso al usuario
         if (!bluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BLUETOOTH);
@@ -81,19 +80,20 @@ public class ChatActivity extends AppCompatActivity {
         status = findViewById(R.id.txtstatus);
         writeMsg = findViewById(R.id.editText);
     }
-
+    // Cuando la activity esta en background se detienen las lecturas del acelerometro
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
         super.onPause();
     }
-
+    // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
         acelerometro.iniciarSensor();
         super.onRestart();
     }
-
+    /* Se definen los diferentes estados del handler al establecer la conexion
+       y cuando se recibe el mensaje se establece en el canvas para visualizarlo */
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
@@ -123,6 +123,9 @@ public class ChatActivity extends AppCompatActivity {
 
     // Funcionalidades de los botones
     private void implementListeners() {
+        /* Se obtiene una lista de los dispositivos enlazados
+        *  se copia los nombre de los dispositivos en una lista
+        *  para mostrarle al usuario con un ArrayAdapter basico de String */
         listDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,7 +145,7 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
-
+        /* Cuando se hace click en lister se inicializa el proceso de BluetoothServerSocket */
         listen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,7 +153,7 @@ public class ChatActivity extends AppCompatActivity {
                 serverClass.start();
             }
         });
-
+        // Cuando se muestra la lista establece un Client que se conectara al server
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -159,7 +162,7 @@ public class ChatActivity extends AppCompatActivity {
                 status.setText("Conectando");
             }
         });
-
+        // Cuando se envia un emnsaje se muestra en el canvas y con writeMsg se escribe el mensaje a enviar
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,7 +175,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-
+    /* Es la clase servidor que implementa el BluetoothServerSocket
+     *  para abrir la conexion, maneja los estados con handler */
     private class ServerClass extends Thread {
         private BluetoothServerSocket serverSocket;
 
@@ -183,7 +187,7 @@ public class ChatActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
+        // Se estableceran los diferentes estados dependiendo de la conexion
         public void run() {
             BluetoothSocket socket = null;
             while (socket == null) {
@@ -202,7 +206,7 @@ public class ChatActivity extends AppCompatActivity {
                     Message message = Message.obtain();
                     message.what = STATE_CONNECTED;
                     handler.sendMessage(message);
-                    // write some code for send / receive
+                    // Se escribe el mensaje recibido
                     sendReceive = new SendReceiveChat(socket, handler);
                     sendReceive.start();
                     break;
@@ -210,11 +214,11 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
     }
-
+    // La clase cleinte establece un BluetoothSocket para la conexion con el servidor
     private class ClientClass extends Thread {
         private BluetoothDevice device;
         private BluetoothSocket socket;
-
+        // Recibe el dispositivo y se conecta con el que compartta el ID de identificacion de app
         public ClientClass(BluetoothDevice device) {
             this.device = device;
             try {
@@ -225,15 +229,15 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         public void run() {
-            try {
+            try {   // cuando haya conexion de establece como conectado
                 socket.connect();
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTED;
                 handler.sendMessage(message);
                 sendReceive = new SendReceiveChat(socket, handler);
-                sendReceive.start();
+                sendReceive.start();    // esta listo para enviar mensajes
 
-            } catch (IOException e) {
+            } catch (IOException e) {   // si hay algun error
                 e.printStackTrace();
                 Message message = Message.obtain();
                 message.what = STATE_CONECTION_FAILED;

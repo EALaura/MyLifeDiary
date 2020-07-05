@@ -5,10 +5,11 @@ import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
-
 import java.io.IOException;
 import java.util.UUID;
 
+/* Es la clase servidor que implementa el BluetoothServerSocket
+*  para abrir la conexion, maneja los estados con handler */
 public class ServerClassImage extends Thread {
     private BluetoothServerSocket serverSocket;
     static final int STATE_CONNECTING = 2;
@@ -17,7 +18,8 @@ public class ServerClassImage extends Thread {
     Handler handler;
     SendReceiveImage sendReceive;
 
-    // Constructor
+    /* Constructor de clase, recibe un handler para fijar el status, un objeto sendReceive
+       del activity, un bluetooth adapter, nombre de la aplicación, y el ID unico de aplicacion */
     public ServerClassImage(Handler handler, SendReceiveImage sendReceive, BluetoothAdapter bluetoothAdapter, String APP_NAME, UUID MY_UUID) {
         this.handler = handler;
         this.sendReceive = sendReceive;
@@ -35,22 +37,22 @@ public class ServerClassImage extends Thread {
     public void run() {
         BluetoothSocket socket = null;
         while (socket == null) {
-            try {
+            try {   // primer estado: conectando
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTING;
                 handler.sendMessage(message);
                 socket = serverSocket.accept();
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace();    // si ocurre un error en la conexion
                 Message message = Message.obtain();
                 message.what = STATE_CONECTION_FAILED;
                 handler.sendMessage(message);
             }
-            if (socket != null) {
+            if (socket != null) {   // cuando el socket establece coneccion
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTED;
                 handler.sendMessage(message);
-                // write some code for send / receive
+                // ya se encuentra conectado e inicializa el sendReceiveImage
                 sendReceive = new SendReceiveImage(socket, handler);
                 sendReceive.start();
                 break;

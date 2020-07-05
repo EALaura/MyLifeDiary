@@ -2,7 +2,6 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -21,18 +20,18 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
-
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
 import com.sya.mylifediary.R;
 
+/* Esta Activity se activa cuando el usuario hace click en el icono de Bluetooth
+*  en la lista, la imagen de su historia puede ser compartida por Bluetooth */
 public class ShareActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     public Acelerometro acelerometro;
@@ -51,15 +50,15 @@ public class ShareActivity extends AppCompatActivity {
     static final int STATE_CONECTION_FAILED = 4;
     static final int STATE_MESSAGE_RECEIVED = 5;
     int REQUEST_ENABLE_BLUETOOTH = 1;
-    private static final String APP_NAME = "MyLifeDiary";
-    private static final UUID MY_UUID = UUID.fromString("19b29419-3b3e-4d87-aefd-2488b6e8dd3b");
+    private static final String APP_NAME = "MyLifeDiary";   // nombre de la aplicacion
+    private static final UUID MY_UUID = UUID.fromString("19b29419-3b3e-4d87-aefd-2488b6e8dd3b");    // ID de identificacion unico
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        // datos de sharedPreferences para la sesion y acelerometro
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
@@ -72,7 +71,7 @@ public class ShareActivity extends AppCompatActivity {
         }
         try {
             bitmap = BitmapFactory.decodeStream(this.openFileInput("myImage"));
-            canvas.setImageBitmap(bitmap);
+            canvas.setImageBitmap(bitmap);  // la imagen recibida de ListActivity se muestra en el canvas
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -87,13 +86,13 @@ public class ShareActivity extends AppCompatActivity {
         canvas = findViewById(R.id.image);
         status = findViewById(R.id.txtstatus);
     }
-
+    // Cuando la activity esta en background se detienen las lecturas del acelerometro
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
         super.onPause();
     }
-
+    // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
         acelerometro.iniciarSensor();
@@ -130,7 +129,9 @@ public class ShareActivity extends AppCompatActivity {
     // Funcionalidades de los botones
     private void implementListeners() {
 
-        //Lista los dispositivos encontrados con el bluetooth activado
+        /* Se obtiene una lista de los dispositivos enlazados
+         *  se copia los nombre de los dispositivos en una lista
+         *  para mostrarle al usuario con un ArrayAdapter basico de String */
         listDevices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -205,7 +206,7 @@ public class ShareActivity extends AppCompatActivity {
 
         public void run() {
             try {
-                socket.connect();
+                socket.connect();   // si la conexion es exitosa
                 Message message = Message.obtain();
                 message.what = STATE_CONNECTED;
                 handler.sendMessage(message);
@@ -213,7 +214,7 @@ public class ShareActivity extends AppCompatActivity {
                 sendReceive.start();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                e.printStackTrace();    // si ocurre un error
                 Message message = Message.obtain();
                 message.what = STATE_CONECTION_FAILED;
                 handler.sendMessage(message);
