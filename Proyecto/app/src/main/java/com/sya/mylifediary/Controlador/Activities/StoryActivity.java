@@ -43,9 +43,7 @@ import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiv
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Date;
 
 /* Es la Activity para la creación de la historia, el usuario puede tomar una foto,
@@ -155,7 +153,7 @@ public class StoryActivity extends AppCompatActivity {
 
     /* Cuando se guarda una historia, la imagen se guarda en la carpeta Storys_img en el storage
     *  se recupera la url del storage para enlazar la imagen a la ruta ImageUrl del modelo Story
-    *  Finalmente se almacena la historia completa y se lanza la siguiente actividad*/
+    *  Finalmente se almacena la historia completa en database y se lanza la siguiente actividad */
     private void saveStory() {
         getValues();
         final Intent intent = new Intent(StoryActivity.this, HomeActivity.class);
@@ -171,7 +169,7 @@ public class StoryActivity extends AppCompatActivity {
                 Uri downloadUri = uriTask.getResult();
                 story.setImageAddress(downloadUri.toString());
                 // insertar en firebase
-                ref.push().setValue(story);
+                ref.child("Story " + story.getTitle()).setValue(story);
                 Toast.makeText(StoryActivity.this, "Guardado Exitosamente!", Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
