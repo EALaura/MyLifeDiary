@@ -62,7 +62,7 @@ public class StoryAdapter extends PagerAdapter {
         FloatingActionButton share = view.findViewById(R.id.btn);
 
         // se fija el contenido del item actual de la lista en el View
-        imageView.setImageBitmap(listStories.get(position).getPhoto());
+        //imageView.setImageBitmap(listStories.get(position).getPhoto());
         title.setText(listStories.get(position).getTitle());
         location.setText(listStories.get(position).getLocation());
         description.setText(listStories.get(position).getDescription());

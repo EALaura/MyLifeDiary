@@ -34,13 +34,13 @@ public class ListStories extends AppCompatActivity {
         Story myStory = (Story) getIntent().getSerializableExtra("story");
         try {   // Como la foto es muy grande para ser enviada entre intent se recibe aquí
             bitmap = BitmapFactory.decodeStream(this.openFileInput("photo"));
-            myStory.setPhoto(bitmap);   // y se le coloca el bitmap a la historia
+            //myStory.setPhoto(bitmap);   // y se le coloca el bitmap a la historia
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         // Se añade la historia a la lista
         stories.add(myStory);
-        initData();
+        //initData();
         viewpager = findViewById(R.id.view);
         StoryAdapter adapter = new StoryAdapter(stories, this); // creacion del adapter
         viewpager.setAdapter(adapter);
@@ -59,12 +59,12 @@ public class ListStories extends AppCompatActivity {
     }
 
     // Inicializa 3 historias precargadas en la aplicacion, para que la lista no se vea vacia
-    private void initData() {
+    /*private void initData() {
         Bitmap icon1 = BitmapFactory.decodeResource(this.getResources(), R.drawable.img1);
         Bitmap icon2 = BitmapFactory.decodeResource(this.getResources(), R.drawable.img2);
         Bitmap icon3 = BitmapFactory.decodeResource(this.getResources(), R.drawable.img3);
         stories.add(new Story("Playa", "Cuba", "El gran lugar de mis vacaciones soñadas.", icon1));
         stories.add(new Story("Hotel", "Puerto Rico", "Buenos momentos en familia.", icon2));
         stories.add(new Story("Aeropuerto", "Peru", "Regreso el siguiente mes.", icon3));
-    }
+    }*/
 }

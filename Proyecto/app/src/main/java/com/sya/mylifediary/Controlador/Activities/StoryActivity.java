@@ -1,10 +1,15 @@
 package com.sya.mylifediary.Controlador.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
@@ -21,13 +26,27 @@ import android.util.Log;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Date;
 
 /* Es la Activity para la creación de la historia, el usuario puede tomar una foto,
 *  añadir un titulo, una descripcion, la ubicación se obtiene por medio de
@@ -44,7 +63,12 @@ public class StoryActivity extends AppCompatActivity {
     public Button camera, save;
     public String title, location, description;
     public Bitmap bitmap;
-
+    // Variables de Firebase
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
+    private FirebaseAuth mAuth;
+    private Story story;
+    private Uri uriImg;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,11 +78,44 @@ public class StoryActivity extends AppCompatActivity {
         broadcastReceiver = new LocationBroadcastReceiver(storyActivityInf, this);
         checkLocationPermission();  // Verifica los permisos de ubicación
         findViewItems();
-        // Con intent implicito inicia el servicio de camara
+        story = new Story();
+
+        // inicializa el servicio de Firebase
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference("Story");
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+        } else {
+            signInAnonymously();
+        }
+        implementsListeners();
+    }
+
+    // Permite a la Aplicacion usar Firebase de forma anonima para hacer las pruebas de almacenamiento
+    private void signInAnonymously(){
+        mAuth.signInAnonymously().addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
+            @Override public void onSuccess(AuthResult authResult) {
+            }
+        }) .addOnFailureListener(this, new OnFailureListener() {
+            @Override public void onFailure(@NonNull Exception exception) {
+                Log.e("TAG", "signInAnonymously:FAILURE", exception);
+            }
+        });
+    }
+
+    // Implementar los listeners de los dos botones
+    private void implementsListeners() {
+        // Con intent implicito inicia el servicio de camara y se recupera la imagen
         camera.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                File file = new File(getApplicationContext().getExternalFilesDir(null), "story.jpg");
+                uriImg = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", file);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImg);
                 startActivityForResult(intent, 0);
             }
         });
@@ -89,34 +146,38 @@ public class StoryActivity extends AppCompatActivity {
         save = findViewById(R.id.buttonStory);
     }
 
-    /* Cuando se guarda una historia, se crea un objeto Story se llenan todos los datos, menos la imagen,
-    *  y la imagen se envia por separado al ser mucha información, este proceso se mejorará futuramente
-    *  al guardar estos datos en Firebase*/
-    private void saveStory() {
-        createImageFromBitmap(bitmap);
-        Story story = new Story(title, location, description, null);
-        Intent intent = new Intent(StoryActivity.this, ListStories.class);
-        intent.putExtra("story", story);
-        startActivity(intent);
-        Toast.makeText(StoryActivity.this, "Guardado Exitosamente!", Toast.LENGTH_SHORT).show();
+    // Obtener valores de los campos
+    private void getValues(){
+        story.setTitle(titleText.getText().toString());
+        story.setLocation(textAddress.getText().toString());
+        story.setDescription(descriptionText.getText().toString());
     }
 
-    /* Comprime la imagen con un nombre, esto permite el envio de la imagen
-       al siguiente activity ya que si se envia por un intent se exede el tamaño maximo*/
-    public String createImageFromBitmap(Bitmap bitmap) {
-        String fileName = "photo";//no .png or .jpg needed
-        try {
-            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            FileOutputStream fo = this.openFileOutput(fileName, Context.MODE_PRIVATE);
-            fo.write(bytes.toByteArray());
-            fo.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fileName = null;
-        }
-        return fileName;
+    /* Cuando se guarda una historia, la imagen se guarda en la carpeta Storys_img en el storage
+    *  se recupera la url del storage para enlazar la imagen a la ruta ImageUrl del modelo Story
+    *  Finalmente se almacena la historia completa y se lanza la siguiente actividad*/
+    private void saveStory() {
+        getValues();
+        final Intent intent = new Intent(StoryActivity.this, HomeActivity.class);
+        final StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        final StorageReference file = storageRef.child("Storys_img");
+        final StorageReference photoRef = file.child(new Date().toString());
+        photoRef.putFile(uriImg).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // procesar el archivo para el storage
+                Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                while(!uriTask.isSuccessful());
+                Uri downloadUri = uriTask.getResult();
+                story.setImageAddress(downloadUri.toString());
+                // insertar en firebase
+                ref.push().setValue(story);
+                Toast.makeText(StoryActivity.this, "Guardado Exitosamente!", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        });
     }
+
     // Se inicializan los datos se sesion sharedPreferences, el acelerometro y el BroadcastReceiver
     @Override
     protected void onResume() {
@@ -131,6 +192,7 @@ public class StoryActivity extends AppCompatActivity {
             Log.d(TAG, "broadcastReceiver is null");
         }
     }
+
     /* Cuando la activity esta en background se detienen las lecturas del acelerometro
        y del broadcast Receiver*/
     @Override
@@ -139,17 +201,20 @@ public class StoryActivity extends AppCompatActivity {
         unregisterReceiver(broadcastReceiver);
         super.onPause();
     }
+
     // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
         acelerometro.iniciarSensor();
         super.onRestart();
     }
+
     // Recupera la foto capturada con la camara
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        bitmap = (Bitmap) data.getExtras().get("data");   //Captura la imagen obtenida de la camara
+        //bitmap = (Bitmap) data.getExtras().get("data");   //Captura la imagen obtenida de la camara
+        bitmap = BitmapFactory.decodeFile(getApplicationContext().getExternalFilesDir(null) + "/story.jpg");
         image.setImageBitmap(bitmap);
     }
 
@@ -159,6 +224,7 @@ public class StoryActivity extends AppCompatActivity {
                 Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
         return true;
     }
+
     // si los permisos son concedidos, inicia el servicio de GPS de broadcastReceiber
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -176,6 +242,7 @@ public class StoryActivity extends AppCompatActivity {
             }
         }
     }
+
     // La ubicacion exacta se recupera con un objeto storyActivityInf desde el LocationBroadcastReceiber
     private StoryActivityInf storyActivityInf = new StoryActivityInf() {
         @Override

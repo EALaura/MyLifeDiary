@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".Controlador.Apps.MyApp"
@@ -15,32 +17,37 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Controlador.Activities.ChatActivity"
-            android:parentActivityName=".Controlador.Activities.HomeActivity" >
+        <activity
+            android:name=".Controlador.Activities.ChatActivity"
+            android:parentActivityName=".Controlador.Activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Controlador.Activities.HomeActivity" />
         </activity>
-        <activity android:name=".Controlador.Activities.ShareActivity"
-            android:parentActivityName=".Controlador.Activities.HomeActivity" >
+        <activity
+            android:name=".Controlador.Activities.ShareActivity"
+            android:parentActivityName=".Controlador.Activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Controlador.Activities.HomeActivity" />
         </activity>
-        <activity android:name=".Controlador.Activities.ReceiveActivity"
-            android:parentActivityName=".Controlador.Activities.HomeActivity" >
+        <activity
+            android:name=".Controlador.Activities.ReceiveActivity"
+            android:parentActivityName=".Controlador.Activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Controlador.Activities.HomeActivity" />
         </activity>
-        <activity android:name=".Controlador.Activities.ListStories"
-            android:parentActivityName=".Controlador.Activities.HomeActivity" >
+        <activity
+            android:name=".Controlador.Activities.ListStories"
+            android:parentActivityName=".Controlador.Activities.HomeActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Controlador.Activities.HomeActivity" />
         </activity>
-        <activity android:name=".Controlador.Activities.RegisterActivity"
-            android:parentActivityName=".Controlador.Activities.LoginActivity" >
+        <activity
+            android:name=".Controlador.Activities.RegisterActivity"
+            android:parentActivityName=".Controlador.Activities.LoginActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Controlador.Activities.LoginActivity" />
@@ -57,12 +64,22 @@
             android:theme="@style/SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".Controlador.Activities.HomeActivity" />
-        <activity android:name=".Controlador.Activities.LoginActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".Controlador.Activities.LoginActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+    <provider
+        android:authorities="com.sya.mylifediary.provider"
+        android:name="androidx.core.content.FileProvider"
+        android:grantUriPermissions="true"
+        android:exported="false">
+        <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                   android:resource="@xml/file_paths"/>
+    </provider>
     </application>
 
 </manifest>

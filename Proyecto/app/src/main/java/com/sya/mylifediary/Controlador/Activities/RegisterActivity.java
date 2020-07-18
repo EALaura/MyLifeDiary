@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +21,7 @@ public class RegisterActivity extends AppCompatActivity {
     public Button btnRegister;
     public Button btnCancel;
     private EditText username, name, email, password1, password2;
+    // Variables de Firebase
     private FirebaseDatabase database;
     private DatabaseReference ref;
     User user;
@@ -31,6 +31,8 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         findViewItems();
+
+        // inicializa el servicio de Firebase
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("User");
         user = new User();

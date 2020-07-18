@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "440453186817-jbhcoqtg10coeev6nd8071l70obh5k49.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sya.mylifediary",
+            "certificate_hash": "b43a07714fe5f108dc0c51a9c3b4859849641102"
+          }
+        },
+        {
           "client_id": "440453186817-hbjsrckc2o1632a3gak4q9404bs2iajs.apps.googleusercontent.com",
           "client_type": 3
         }
