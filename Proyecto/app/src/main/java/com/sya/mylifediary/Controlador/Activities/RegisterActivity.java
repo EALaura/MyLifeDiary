@@ -79,7 +79,6 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

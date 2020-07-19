@@ -19,7 +19,7 @@ import com.sya.mylifediary.R;
 *  usa sharedPreferences para datos de sesion y un acelerometro */
 public class HomeActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
-    public Button btnAdd, btnReceive, btnChat;
+    public Button btnAdd, btnList, btnReceive, btnChat;
     public Acelerometro acelerometro;
 
     @Override
@@ -47,6 +47,14 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        btnList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {   // Agregar nueva historia
+                Intent intent = new Intent(HomeActivity.this, ListStories.class);
+                startActivity(intent);
+            }
+        });
+
         btnReceive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {   // Recibir una historia
@@ -67,6 +75,7 @@ public class HomeActivity extends AppCompatActivity {
     // Enlazar con la interfaz
     private void findViewItems() {
         btnAdd = findViewById(R.id.buttonAdd);
+        btnList = findViewById(R.id.buttonList);
         btnReceive = findViewById(R.id.buttonReceive);
         btnChat = findViewById(R.id.buttonChat);
     }

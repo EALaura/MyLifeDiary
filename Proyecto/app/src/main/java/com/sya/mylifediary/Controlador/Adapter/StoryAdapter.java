@@ -11,9 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
+import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.sya.mylifediary.Controlador.Activities.ShareActivity;
 import com.sya.mylifediary.Model.Story;
@@ -61,20 +61,13 @@ public class StoryAdapter extends PagerAdapter {
         TextView description = view.findViewById(R.id.description);
         FloatingActionButton share = view.findViewById(R.id.btn);
 
-        // se fija el contenido del item actual de la lista en el View
-        //imageView.setImageBitmap(listStories.get(position).getPhoto());
+        //uso de la libreria Glide para la carga de la imagen desde Firebase
+        Glide.with(context).load(listStories.get(position).getImageAddress()).into(imageView);
         title.setText(listStories.get(position).getTitle());
         location.setText(listStories.get(position).getLocation());
         description.setText(listStories.get(position).getDescription());
 
-        // set event click, devuelve un mensaje con la posicion
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(context, "" + listStories.get(position).getLocation(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        // Al hacer click en el icono de Bluettoth se prepara el envio de la imagen
+        // Al hacer click en el icono de Bluetooth se prepara el envio de la imagen
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

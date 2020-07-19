@@ -11,10 +11,10 @@
         android:id="@+id/image"
         android:layout_gravity="center"
         android:scaleType="fitXY"
-        android:layout_height="400dp"
+        android:layout_height="300dp"
         android:layout_marginBottom="20dp"
         android:src="@drawable/back_home"
-        android:layout_width="300dp"/>
+        android:layout_width="250dp"/>
 
     <Button
         android:id="@+id/buttonAdd"
@@ -27,6 +27,21 @@
         android:textSize="15dp"
         android:backgroundTint="#ef9a9a"
         android:text="Agregar Historia"
+        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/buttonList"
+        android:layout_gravity="center"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_list"
+        android:drawablePadding="8dp"
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp"
+        android:backgroundTint="#ef9a9a"
+        android:text="Ver Historias"
         android:layout_centerVertical="true"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -61,6 +62,7 @@ public class StoryActivity extends AppCompatActivity {
     public Button camera, save;
     public String title, location, description;
     public Bitmap bitmap;
+    private ProgressDialog loading;
     // Variables de Firebase
     private FirebaseDatabase database;
     private DatabaseReference ref;
@@ -76,6 +78,7 @@ public class StoryActivity extends AppCompatActivity {
         broadcastReceiver = new LocationBroadcastReceiver(storyActivityInf, this);
         checkLocationPermission();  // Verifica los permisos de ubicación
         findViewItems();
+        loading = new ProgressDialog(this);
         story = new Story();
 
         // inicializa el servicio de Firebase
@@ -133,7 +136,6 @@ public class StoryActivity extends AppCompatActivity {
             }
         });
     }
-
     // Enlaza con la interfaz
     private void findViewItems() {
         textAddress = findViewById(R.id.textAddress);
@@ -155,6 +157,9 @@ public class StoryActivity extends AppCompatActivity {
     *  se recupera la url del storage para enlazar la imagen a la ruta ImageUrl del modelo Story
     *  Finalmente se almacena la historia completa en database y se lanza la siguiente actividad */
     private void saveStory() {
+        loading.setTitle("Subiendo Historia");
+        loading.setMessage("Espere por favor");
+        loading.show();
         getValues();
         final Intent intent = new Intent(StoryActivity.this, HomeActivity.class);
         final StorageReference storageRef = FirebaseStorage.getInstance().getReference();
@@ -170,6 +175,7 @@ public class StoryActivity extends AppCompatActivity {
                 story.setImageAddress(downloadUri.toString());
                 // insertar en firebase
                 ref.child("Story " + story.getTitle()).setValue(story);
+                loading.dismiss();
                 Toast.makeText(StoryActivity.this, "Guardado Exitosamente!", Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
@@ -199,7 +205,6 @@ public class StoryActivity extends AppCompatActivity {
         unregisterReceiver(broadcastReceiver);
         super.onPause();
     }
-
     // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
@@ -211,7 +216,6 @@ public class StoryActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //bitmap = (Bitmap) data.getExtras().get("data");   //Captura la imagen obtenida de la camara
         bitmap = BitmapFactory.decodeFile(getApplicationContext().getExternalFilesDir(null) + "/story.jpg");
         image.setImageBitmap(bitmap);
     }
@@ -228,14 +232,12 @@ public class StoryActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {  // Permiso concedido
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {  // Permiso concedido
                     if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                             == PackageManager.PERMISSION_GRANTED)
                         broadcastReceiver.initGPS();
-                } else {    // permission denied
+                } else     // permission denied
                     Log.d(TAG, "Location not allowed");
-                }
                 return;
             }
         }
