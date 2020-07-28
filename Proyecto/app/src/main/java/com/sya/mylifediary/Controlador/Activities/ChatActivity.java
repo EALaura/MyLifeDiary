@@ -42,7 +42,6 @@ public class ChatActivity extends AppCompatActivity {
     public Acelerometro acelerometro;
 
     // variables para el Handler
-    static final int STATE_LISTENING = 1;
     static final int STATE_CONNECTING = 2;
     static final int STATE_CONNECTED = 3;
     static final int STATE_CONECTION_FAILED = 4;
@@ -98,9 +97,6 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             switch (msg.what) {
-                case STATE_LISTENING:
-                    status.setText("Escuchando");
-                    break;
                 case STATE_CONNECTING:
                     status.setText("Conectando");
                     break;
@@ -111,6 +107,7 @@ public class ChatActivity extends AppCompatActivity {
                     status.setText("Error");
                     break;
                 case STATE_MESSAGE_RECEIVED:
+                    status.setText("Chateando");
                     byte[] readBuffer = (byte[]) msg.obj;
                     String tempMsg = new String(readBuffer, 0, msg.arg1);
                     previusChat = previusChat + tempMsg;

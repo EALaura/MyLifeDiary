@@ -44,13 +44,10 @@ public class ShareActivity extends AppCompatActivity {
     public BluetoothDevice[] btArray; // contiene todos los dispositivos
     public SendReceiveImage sendReceive;
     // variables para el Handler
-    static final int STATE_LISTENING = 1;
     static final int STATE_CONNECTING = 2;
     static final int STATE_CONNECTED = 3;
     static final int STATE_CONECTION_FAILED = 4;
-    static final int STATE_MESSAGE_RECEIVED = 5;
     int REQUEST_ENABLE_BLUETOOTH = 1;
-    private static final String APP_NAME = "MyLifeDiary";   // nombre de la aplicacion
     private static final UUID MY_UUID = UUID.fromString("19b29419-3b3e-4d87-aefd-2488b6e8dd3b");    // ID de identificacion unico
 
     @Override
@@ -104,9 +101,6 @@ public class ShareActivity extends AppCompatActivity {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             switch (msg.what) {
-                case STATE_LISTENING:
-                    status.setText("Escuchando");
-                    break;
                 case STATE_CONNECTING:
                     status.setText("Conectando");
                     break;
@@ -115,11 +109,6 @@ public class ShareActivity extends AppCompatActivity {
                     break;
                 case STATE_CONECTION_FAILED:
                     status.setText("Error");
-                    break;
-                case STATE_MESSAGE_RECEIVED:
-                    byte[] readBuffer = (byte[]) msg.obj;
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(readBuffer, 0, msg.arg1);
-                    canvas.setImageBitmap(bitmap);
                     break;
             }
             return true;
@@ -163,25 +152,24 @@ public class ShareActivity extends AppCompatActivity {
             }
         });
 
-        /*
-         * La imagen debe comprimirse al enviar y se envía por subarrays (por partes),
+        /* La imagen debe comprimirse al enviar y se envía por subarrays (por partes),
          * mediante otro proceso sendReceive se escribe los datos que se van enviando por cada
-         * iteración según el tamaño de la imagen, el envio dura aproximadamente un minuto
-         */
+         * iteración según el tamaño de la imagen, el envio dura aproximadamente un minuto */
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
                 byte[] imageBytes = stream.toByteArray();
-
                 int subArraySize = 400;
                 sendReceive.write(String.valueOf(imageBytes.length).getBytes());
+
                 // para enviar los subarrays
                 for (int i = 0; i < imageBytes.length; i += subArraySize) {
                     byte[] tempArray = Arrays.copyOfRange(imageBytes, i, Math.min(imageBytes.length, i + subArraySize));
                     sendReceive.write(tempArray);
                 }
+                status.setText("Enviado");
             }
         });
     }
