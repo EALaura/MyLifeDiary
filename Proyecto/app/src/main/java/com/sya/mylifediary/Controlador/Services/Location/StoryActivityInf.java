@@ -6,5 +6,5 @@ import java.io.Serializable;
 *  obtener la ubicación del broadcasteReceiver por medio de un
 *  objeto creado en el activity y enviado al broadcasteReceiver */
 public interface StoryActivityInf extends Serializable {
-    void DisplayLocationChange(String address);
+    void DisplayLocationChange(String address, double latitude, double longitude);
 }

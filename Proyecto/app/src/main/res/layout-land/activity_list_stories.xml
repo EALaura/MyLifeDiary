@@ -9,8 +9,9 @@
 
     <com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager
         android:id="@+id/view"
-        android:layout_width="match_parent"
+        android:layout_width="400dp"
         android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
         app:icvp_interpolator="@android:anim/accelerate_decelerate_interpolator"
         app:icvp_scroll_duration="250"
         app:icvp_center_page_scale_offset="30dp"

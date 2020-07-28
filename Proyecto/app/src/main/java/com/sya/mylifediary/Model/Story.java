@@ -10,9 +10,10 @@ public class Story implements Serializable {
     private String location;
     private String description;
     private String imageAddress;
+    private double latitude;
+    private double longitude;
 
     /* Métodos get y set para cada atributo */
-
     public String getTitle() {
         return title;
     }
@@ -43,5 +44,21 @@ public class Story implements Serializable {
 
     public void setImageAddress(String imageAddress) {
         this.imageAddress = imageAddress;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }

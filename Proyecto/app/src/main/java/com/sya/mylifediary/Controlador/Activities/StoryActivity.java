@@ -34,41 +34,36 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
+import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
 import java.io.File;
-import java.util.Date;
 
 /* Es la Activity para la creación de la historia, el usuario puede tomar una foto,
 *  añadir un titulo, una descripcion, la ubicación se obtiene por medio de
 *  LocationBroadcastReceiver que recibe la posicion exacta del usuario */
 public class StoryActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
-    public Acelerometro acelerometro;
+    private Acelerometro acelerometro;
     private static final String TAG = "MainActivity";
     private LocationBroadcastReceiver broadcastReceiver;
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
-    public TextView textAddress;
-    public ImageView image;
-    public EditText titleText, descriptionText;
-    public Button camera, save;
-    public String title, location, description;
-    public Bitmap bitmap;
+    private static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
+    private TextView textAddress;
+    private ImageView image;
+    private EditText titleText, descriptionText;
+    private Button camera, save;
+    private String title, location, description;
+    private double latitude_, longitude_;
+    private Bitmap bitmap;
     private ProgressDialog loading;
-    // Variables de Firebase
-    private FirebaseDatabase database;
-    private DatabaseReference ref;
     private FirebaseAuth mAuth;
     private Story story;
     private Uri uriImg;
+    private FirebaseService service;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,10 +75,8 @@ public class StoryActivity extends AppCompatActivity {
         findViewItems();
         loading = new ProgressDialog(this);
         story = new Story();
+        service = new FirebaseService();
 
-        // inicializa el servicio de Firebase
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("Story");
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null) {
@@ -151,6 +144,8 @@ public class StoryActivity extends AppCompatActivity {
         story.setTitle(titleText.getText().toString());
         story.setLocation(textAddress.getText().toString());
         story.setDescription(descriptionText.getText().toString());
+        story.setLatitude(latitude_);
+        story.setLongitude(longitude_);
     }
 
     /* Cuando se guarda una historia, la imagen se guarda en la carpeta Storys_img en el storage
@@ -162,10 +157,8 @@ public class StoryActivity extends AppCompatActivity {
         loading.show();
         getValues();
         final Intent intent = new Intent(StoryActivity.this, HomeActivity.class);
-        final StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        final StorageReference file = storageRef.child("Storys_img");
-        final StorageReference photoRef = file.child(new Date().toString());
-        photoRef.putFile(uriImg).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+        service.initReferences().putFile(uriImg).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // procesar el archivo para el storage
@@ -174,7 +167,7 @@ public class StoryActivity extends AppCompatActivity {
                 Uri downloadUri = uriTask.getResult();
                 story.setImageAddress(downloadUri.toString());
                 // insertar en firebase
-                ref.child("Story " + story.getTitle()).setValue(story);
+                service.save(story);
                 loading.dismiss();
                 Toast.makeText(StoryActivity.this, "Guardado Exitosamente!", Toast.LENGTH_SHORT).show();
                 startActivity(intent);
@@ -246,10 +239,12 @@ public class StoryActivity extends AppCompatActivity {
     // La ubicacion exacta se recupera con un objeto storyActivityInf desde el LocationBroadcastReceiber
     private StoryActivityInf storyActivityInf = new StoryActivityInf() {
         @Override
-        public void DisplayLocationChange(String address) {
+        public void DisplayLocationChange(String address, double latitude, double longitude) {
             Log.d(TAG, "Mi ubicacion: " + address);
             textAddress.setText(address);
             location = address;
+            latitude_ = latitude;
+            longitude_ = longitude;
         }
     };
 }

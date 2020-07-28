@@ -46,7 +46,7 @@ public class LocationBroadcastReceiver extends BroadcastReceiver {
             double longitude = location.getLongitude();
             Log.d(TAG, "latitud: " + latitude + ", " + "longitud: " + longitude);
             address = convertToAddress(longitude, latitude);
-            storyActivityInf.DisplayLocationChange(address);
+            storyActivityInf.DisplayLocationChange(address, latitude, longitude);
         }
     }
 
