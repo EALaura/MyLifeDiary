@@ -7,11 +7,10 @@ import android.os.Bundle;
 import com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sya.mylifediary.Controlador.Adapter.StoryAdapter;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
+import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
 import java.util.ArrayList;
@@ -23,10 +22,8 @@ public class ListStories extends AppCompatActivity {
     private List<Story> stories = new ArrayList<>();
     private Acelerometro acelerometro;
     private SharedPreferences sharedPreferences;
-    // Variables de firebase
-    private DatabaseReference rootRef;
-    private DatabaseReference yourRef;
-    private ValueEventListener eventListener;
+    private ValueEventListener eventListener;   // Permite recuperar la informacion
+    private FirebaseService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,14 +33,13 @@ public class ListStories extends AppCompatActivity {
         // Verifica los datos de sesion y del aceleracion:
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
+        service = new FirebaseService();
         viewpager = findViewById(R.id.view);
         retrieveData();
     }
 
     // crear nuevos object storys desde la bd de Firebase y mandarlos al Adapter
     private void retrieveData() {
-        rootRef = FirebaseDatabase.getInstance().getReference();
-        yourRef = rootRef.child("Story");
         eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -61,7 +57,7 @@ public class ListStories extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         };
-        yourRef.addListenerForSingleValueEvent(eventListener);
+        service.getReference().addListenerForSingleValueEvent(eventListener);
     }
 
     // Cuando la activity esta en background se detienen las lecturas del acelerometro

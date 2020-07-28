@@ -12,11 +12,16 @@ public class FirebaseService {
     // Variables de Firebase
     private FirebaseDatabase database;
     private DatabaseReference ref;
+    private DatabaseReference rootRef;
+    private DatabaseReference yourRef;
+
     // Constructor
     public FirebaseService(){
         // inicializa el servicio de Firebase
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("Story");
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        yourRef = rootRef.child("Story");
     }
 
     // Inicializa las referencias para guardar la información
@@ -26,8 +31,14 @@ public class FirebaseService {
         final StorageReference photoRef = file.child(new Date().toString());
         return photoRef;
     }
+
     // La historia se guardará con el nombre del titulo de la historia
     public void save(Story story){
         ref.child("Story " + story.getTitle()).setValue(story);
+    }
+
+    // Devuelve la referencia de las historias guardadas en Firebase
+    public DatabaseReference getReference(){
+        return yourRef;
     }
 }

@@ -113,7 +113,7 @@ public class StoryActivity extends AppCompatActivity {
                 startActivityForResult(intent, 0);
             }
         });
-        // Valida que los campos de titulo y descripcion de la imegn no estén vacios
+        // Valida que los campos de titulo y descripcion de la imagen no estén vacios
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
