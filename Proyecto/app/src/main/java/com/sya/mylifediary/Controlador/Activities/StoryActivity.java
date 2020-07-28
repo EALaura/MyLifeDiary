@@ -55,8 +55,8 @@ public class StoryActivity extends AppCompatActivity {
     private TextView textAddress;
     private ImageView image;
     private EditText titleText, descriptionText;
-    private Button camera, save;
-    private String title, location, description;
+    private Button camera, gallary, save;
+    private String title, description;
     private double latitude_, longitude_;
     private Bitmap bitmap;
     private ProgressDialog loading;
@@ -64,6 +64,8 @@ public class StoryActivity extends AppCompatActivity {
     private Story story;
     private Uri uriImg;
     private FirebaseService service;
+    private final int CODE_CAMERA = 0;
+    private final int CODE_GALLARY = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +112,15 @@ public class StoryActivity extends AppCompatActivity {
                 File file = new File(getApplicationContext().getExternalFilesDir(null), "story.jpg");
                 uriImg = FileProvider.getUriForFile(getApplicationContext(), getApplicationContext().getPackageName() + ".provider", file);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, uriImg);
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, CODE_CAMERA);
+            }
+        });
+        //Permite abrir la galería y seleccionar una foto de alli
+        gallary.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, CODE_GALLARY);
             }
         });
         // Valida que los campos de titulo y descripcion de la imagen no estén vacios
@@ -134,6 +144,7 @@ public class StoryActivity extends AppCompatActivity {
         textAddress = findViewById(R.id.textAddress);
         image = findViewById(R.id.photo);
         camera = findViewById(R.id.btn_cam);
+        gallary = findViewById(R.id.btn_up);
         descriptionText = findViewById(R.id.txt_description);
         titleText = findViewById(R.id.textTitle);
         save = findViewById(R.id.buttonStory);
@@ -205,12 +216,27 @@ public class StoryActivity extends AppCompatActivity {
         super.onRestart();
     }
 
-    // Recupera la foto capturada con la camara
+    // Recupera la foto subida de la galería o capturada con la camara
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        bitmap = BitmapFactory.decodeFile(getApplicationContext().getExternalFilesDir(null) + "/story.jpg");
-        image.setImageBitmap(bitmap);
+        switch (requestCode){
+            case CODE_CAMERA:
+                bitmap = BitmapFactory.decodeFile(getApplicationContext().getExternalFilesDir(null) + "/story.jpg");
+                image.setImageBitmap(bitmap);
+                break;
+            case CODE_GALLARY:
+                if(data != null){   // Si el usuario prefiere sacar una foto
+                    uriImg = data.getData();
+                    try{
+                        bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uriImg);
+                        image.setImageBitmap(bitmap);
+                    }catch(Exception e){
+                        Log.e("Error", "Exception", e);
+                    }
+                }
+                break;
+        }
     }
 
     // Permisos para usar la Localizacion
@@ -242,7 +268,6 @@ public class StoryActivity extends AppCompatActivity {
         public void DisplayLocationChange(String address, double latitude, double longitude) {
             Log.d(TAG, "Mi ubicacion: " + address);
             textAddress.setText(address);
-            location = address;
             latitude_ = latitude;
             longitude_ = longitude;
         }
