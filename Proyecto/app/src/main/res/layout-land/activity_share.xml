@@ -99,7 +99,8 @@
         android:layout_gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_weight="1"
-        android:backgroundTint="#ef9a9a"
+        android:enabled="false"
+        android:backgroundTint="@android:color/darker_gray"
         android:text="Enviar"
         android:textColor="@android:color/white"
         android:textSize="10dp" />

@@ -3,11 +3,10 @@ package com.sya.mylifediary.Controlador.Utils;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-
 import com.sya.mylifediary.R;
 
+// Esta clase permite mostrar un mensaje con los datos de los desarrolladores y de contacto
 public class PopupInfoActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

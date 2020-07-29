@@ -19,7 +19,7 @@
             android:scaleType="fitXY"
             android:layout_height="300dp"
             android:layout_marginBottom="20dp"
-            android:src="@drawable/waiting_story"
+            android:src="@drawable/back_image"
             android:layout_width="200dp"/>
 
         <LinearLayout
@@ -84,7 +84,8 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:backgroundTint="#ef9a9a"
+                    android:enabled="false"
+                    android:backgroundTint="@android:color/darker_gray"
                     android:gravity="center"
                     android:text="Descargar"
                     android:textColor="@color/colorWhite"

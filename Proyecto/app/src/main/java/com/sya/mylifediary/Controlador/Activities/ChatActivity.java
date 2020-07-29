@@ -1,6 +1,7 @@
 package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,6 +10,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,11 +21,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.io.IOException;
 import java.util.Set;
 import java.util.UUID;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveChat;
+import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
 /* La clase ChatActivity permite el intercambio de mensajes entre dos moviles,
@@ -40,13 +44,11 @@ public class ChatActivity extends AppCompatActivity {
     public String previusChat = "", currentMsg;
     public SendReceiveChat sendReceive;
     public Acelerometro acelerometro;
-
     // variables para el Handler
     static final int STATE_CONNECTING = 2;
     static final int STATE_CONNECTED = 3;
     static final int STATE_CONECTION_FAILED = 4;
     static final int STATE_MESSAGE_RECEIVED = 5;
-
     int REQUEST_ENABLE_BLUETOOTH = 1;
     private static final String APP_NAME = "MyLifeDiary";   // nombre de la aplicacion
     private static final UUID MY_UUID = UUID.fromString("19b29419-3b3e-4d87-aefd-2488b6e8dd3b");    // ID de identificacion
@@ -80,6 +82,7 @@ public class ChatActivity extends AppCompatActivity {
         writeMsg = findViewById(R.id.editText);
     }
     // Cuando la activity esta en background se detienen las lecturas del acelerometro
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
@@ -94,14 +97,20 @@ public class ChatActivity extends AppCompatActivity {
     /* Se definen los diferentes estados del handler al establecer la conexion
        y cuando se recibe el mensaje se establece en el canvas para visualizarlo */
     Handler handler = new Handler(new Handler.Callback() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case STATE_CONNECTING:
+                    Util.disableButton(listen, ChatActivity.this);
+                    Util.disableButton(listDevices, ChatActivity.this);
+                    Toast.makeText(ChatActivity.this, "Conexion abierta, esperando dispositivos", Toast.LENGTH_LONG).show();
                     status.setText("Conectando");
                     break;
                 case STATE_CONNECTED:
                     status.setText("Conectado");
+                    Util.enableButton(send, ChatActivity.this);
+                    listView.setVisibility(View.GONE);
                     break;
                 case STATE_CONECTION_FAILED:
                     status.setText("Error");
@@ -124,8 +133,12 @@ public class ChatActivity extends AppCompatActivity {
         *  se copia los nombre de los dispositivos en una lista
         *  para mostrarle al usuario con un ArrayAdapter basico de String */
         listDevices.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
+                Util.disableButton(listen, ChatActivity.this);
+                Util.disableButton(listDevices, ChatActivity.this);
+                Toast.makeText(ChatActivity.this, "Seleccione el dispositivo a conectarse", Toast.LENGTH_SHORT).show();
                 Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
                 String[] devices = new String[bluetoothDevices.size()];
                 btArray = new BluetoothDevice[bluetoothDevices.size()];
@@ -154,6 +167,7 @@ public class ChatActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(ChatActivity.this, "Estableciendo conexion", Toast.LENGTH_SHORT).show();
                 ClientClass clientClass = new ClientClass(btArray[position]);
                 clientClass.start();
                 status.setText("Conectando");

@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
 import com.sya.mylifediary.R;
 
@@ -105,10 +104,10 @@ public class LoginActivity extends AppCompatActivity {
     // valida que el formato sea de email y la contraseña mayor a 4 digitos
     private boolean verify(String email, String password) {
         if (!isValidEmail(email)) {
-            Toast.makeText(this, "Email invalido, por favor intenta otra vez", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Email invalido, por favor intenta otra vez", Toast.LENGTH_LONG).show();
             return false;
         } else if (!isValidPassword(password)) {
-            Toast.makeText(this, "Password invalido, ingrese al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Password invalido, ingrese al menos 6 caracteres", Toast.LENGTH_LONG).show();
             return false;
         } else {
             return true;

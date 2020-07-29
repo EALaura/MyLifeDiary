@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,7 +36,7 @@ public class HomeActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_myicon);  //poner el icono en la primera vista
 
-        // Busca el ya creado en el login por el mismo nombre string
+        // Busca los datos existentes de sesion
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();

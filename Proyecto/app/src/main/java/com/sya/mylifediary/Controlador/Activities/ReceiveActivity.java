@@ -1,6 +1,7 @@
 package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
@@ -15,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -36,6 +38,7 @@ import java.util.UUID;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.ServerClassImage;
+import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
 /* Es la Activity que recibirá la imagen de la Historia que otro dispositivo
@@ -157,8 +160,7 @@ public class ReceiveActivity extends AppCompatActivity {
             outStream = new FileOutputStream(outputFile);
             outStream.write(byteArray);
             outStream.close();
-            // mostrar un log con la ruta de la imagen
-            Log.d("Error", "path:" + path.toString());
+            startActivity(new Intent(ReceiveActivity.this, HomeActivity.class));
         // Mostrar errores al guardar la imagen
         } catch (FileNotFoundException e) {
             Log.e("Error", "File Not Found", e);
@@ -169,10 +171,13 @@ public class ReceiveActivity extends AppCompatActivity {
 
     // Estados de acuerdo a la conexion, cuando se recibe la imagen se visualiza en el canvas
     Handler handler = new Handler(new Handler.Callback() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             switch (msg.what) {
                 case STATE_CONNECTING:
+                    Util.disableButton(listen, ReceiveActivity.this);
+                    Toast.makeText(ReceiveActivity.this, "Conexion abierta, esperando dispositivos", Toast.LENGTH_LONG).show();
                     status.setText("Conectando");
                     break;
                 case STATE_CONNECTED:
@@ -183,6 +188,7 @@ public class ReceiveActivity extends AppCompatActivity {
                     break;
                 case STATE_MESSAGE_RECEIVED:
                     status.setText("Recibido");
+                    Util.enableButton(download, ReceiveActivity.this);
                     byte[] readBuffer = (byte[]) msg.obj;
                     Bitmap bitmap = BitmapFactory.decodeByteArray(readBuffer, 0, msg.arg1);
                     canvas.setImageBitmap(bitmap);

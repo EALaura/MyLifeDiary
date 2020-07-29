@@ -33,11 +33,12 @@
             android:layout_marginLeft="20dp"
             android:textColor="@android:color/white"
             android:textSize="15dp"
-            android:backgroundTint="#ef9a9a"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:enabled="false"
+            android:backgroundTint="@android:color/darker_gray"
             android:text="Enviar" />
     </LinearLayout>
 

@@ -1,6 +1,7 @@
 package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,6 +31,7 @@ import java.util.Set;
 import java.util.UUID;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
+import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
 /* Esta Activity se activa cuando el usuario hace click en el icono de Bluetooth
@@ -98,6 +102,7 @@ public class ShareActivity extends AppCompatActivity {
 
     // Estados de acuerdo a la conexion
     Handler handler = new Handler(new Handler.Callback() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean handleMessage(@NonNull Message msg) {
             switch (msg.what) {
@@ -106,6 +111,8 @@ public class ShareActivity extends AppCompatActivity {
                     break;
                 case STATE_CONNECTED:
                     status.setText("Conectado");
+                    listView.setVisibility(View.GONE);
+                    Util.enableButton(send, ShareActivity.this);
                     break;
                 case STATE_CONECTION_FAILED:
                     status.setText("Error");
@@ -122,8 +129,11 @@ public class ShareActivity extends AppCompatActivity {
          *  se copia los nombre de los dispositivos en una lista
          *  para mostrarle al usuario con un ArrayAdapter basico de String */
         listDevices.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
+                Util.disableButton(listDevices, ShareActivity.this);
+                Toast.makeText(ShareActivity.this, "Seleccione el dispositivo a conectarse", Toast.LENGTH_SHORT).show();
                 Set<BluetoothDevice> bluetoothDevices = bluetoothAdapter.getBondedDevices();
                 String[] devices = new String[bluetoothDevices.size()];
                 btArray = new BluetoothDevice[bluetoothDevices.size()];
@@ -146,6 +156,7 @@ public class ShareActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(ShareActivity.this, "Estableciendo conexion", Toast.LENGTH_SHORT).show();
                 ClientClass clientClass = new ClientClass(btArray[position]);
                 clientClass.start();
                 status.setText("Conectando");
@@ -156,6 +167,7 @@ public class ShareActivity extends AppCompatActivity {
          * mediante otro proceso sendReceive se escribe los datos que se van enviando por cada
          * iteración según el tamaño de la imagen, el envio dura aproximadamente un minuto */
         send.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -170,6 +182,9 @@ public class ShareActivity extends AppCompatActivity {
                     sendReceive.write(tempArray);
                 }
                 status.setText("Enviado");
+                Util.disableButton(send, ShareActivity.this);
+                Util.enableButton(listDevices, ShareActivity.this);
+                listView.setVisibility(View.VISIBLE);
             }
         });
     }

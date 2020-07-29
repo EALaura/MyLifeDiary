@@ -15,4 +15,7 @@
     <color name="colorLogin">#008577</color>
     <color name="color_hint">#6BFFFFFF</color>
 
+    <color name="pink_button">#ef9a9a</color>
+    <color name="gray_button">#A9A9A9</color>
+
 </resources>

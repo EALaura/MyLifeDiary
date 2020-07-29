@@ -1,6 +1,5 @@
 package com.sya.mylifediary.Controlador.Activities;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,17 +27,14 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.UploadTask;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
+import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
 import java.io.File;
@@ -60,7 +56,6 @@ public class StoryActivity extends AppCompatActivity {
     private double latitude_, longitude_;
     private Bitmap bitmap;
     private ProgressDialog loading;
-    private FirebaseAuth mAuth;
     private Story story;
     private Uri uriImg;
     private FirebaseService service;
@@ -79,26 +74,7 @@ public class StoryActivity extends AppCompatActivity {
         loading.setCancelable(false);
         story = new Story();
         service = new FirebaseService();    // instancia para servicio de Firebase
-
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null) {
-        } else {
-            signInAnonymously();
-        }
         implementsListeners();
-    }
-
-    // Permite a la Aplicacion usar Firebase de forma anonima para hacer las pruebas de almacenamiento
-    private void signInAnonymously(){
-        mAuth.signInAnonymously().addOnSuccessListener(this, new OnSuccessListener<AuthResult>() {
-            @Override public void onSuccess(AuthResult authResult) {
-            }
-        }) .addOnFailureListener(this, new OnFailureListener() {
-            @Override public void onFailure(@NonNull Exception exception) {
-                Log.e("TAG", "signInAnonymously:FAILURE", exception);
-            }
-        });
     }
 
     // Implementar los listeners de los dos botones
@@ -168,8 +144,6 @@ public class StoryActivity extends AppCompatActivity {
         loading.setMessage("Espere por favor");
         loading.show();
         getValues();
-        final Intent intent = new Intent(StoryActivity.this, HomeActivity.class);
-
         service.initReferences().putFile(uriImg).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -182,7 +156,7 @@ public class StoryActivity extends AppCompatActivity {
                 service.saveStory(story);
                 loading.dismiss();
                 Toast.makeText(StoryActivity.this, "Guardado Exitosamente!", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
+                startActivity(new Intent(StoryActivity.this, HomeActivity.class));
             }
         });
     }
@@ -218,6 +192,7 @@ public class StoryActivity extends AppCompatActivity {
     }
 
     // Recupera la foto subida de la galería o capturada con la camara
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -225,6 +200,7 @@ public class StoryActivity extends AppCompatActivity {
             case CODE_CAMERA:
                 bitmap = BitmapFactory.decodeFile(getApplicationContext().getExternalFilesDir(null) + "/story.jpg");
                 image.setImageBitmap(bitmap);
+                Util.enableButton(save, this);
                 break;
             case CODE_GALLARY:
                 if(data != null){   // Si el usuario prefiere sacar una foto
@@ -232,6 +208,7 @@ public class StoryActivity extends AppCompatActivity {
                     try{
                         bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uriImg);
                         image.setImageBitmap(bitmap);
+                        Util.enableButton(save, this);
                     }catch(Exception e){
                         Log.e("Error", "Exception", e);
                     }
@@ -267,7 +244,6 @@ public class StoryActivity extends AppCompatActivity {
     private StoryActivityInf storyActivityInf = new StoryActivityInf() {
         @Override
         public void DisplayLocationChange(String address, double latitude, double longitude) {
-            Log.d(TAG, "Mi ubicacion: " + address);
             textAddress.setText(address);
             latitude_ = latitude;
             longitude_ = longitude;
