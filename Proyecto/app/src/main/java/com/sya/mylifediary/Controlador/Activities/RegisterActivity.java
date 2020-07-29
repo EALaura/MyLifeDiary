@@ -116,6 +116,7 @@ public class RegisterActivity extends AppCompatActivity {
                             startActivity(intent);
                         } else {
                             if (task.getException() instanceof FirebaseAuthUserCollisionException)
+                                loading.dismiss();
                                 Toast.makeText(RegisterActivity.this, "El usuario ya existe", Toast.LENGTH_SHORT).show();
                         }
                     }

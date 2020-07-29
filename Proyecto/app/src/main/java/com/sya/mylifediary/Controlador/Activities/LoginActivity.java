@@ -1,6 +1,8 @@
 package com.sya.mylifediary.Controlador.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +16,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
 import com.sya.mylifediary.R;
 
 /* Login Activity es la primera activity que se muestra al usuario por primera vez
@@ -23,9 +30,10 @@ public class LoginActivity extends AppCompatActivity {
     private EditText textEmail;
     private EditText textPass;
     private Switch switchRemember;
-    private Button btnLogin;
-    private Button btnRegister;
-    private Button btnOut;
+    private Button btnLogin, btnRegister, btnOut;
+    private String email, password;
+    private FirebaseService service;
+    private ProgressDialog loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +41,12 @@ public class LoginActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
-
-        bindUI();
+        findViewItems();
         // las preferencias privadas no se comparte con otras aplicaciones
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
+        service = new FirebaseService();    // instancia para servicio de Firebase
+        loading = new ProgressDialog(this);
+        loading.setCancelable(false);
         implementListeners();
     }
 
@@ -46,10 +56,10 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = textEmail.getText().toString();
-                String password = textPass.getText().toString();
-                if (logIn(email, password)) {
-                    goToHome();
+                email = textEmail.getText().toString();
+                password = textPass.getText().toString();
+                if (verify(email, password)) {
+                    logIn();
                     saveOnPreferences(email, password);
                 }
             }
@@ -70,8 +80,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
     // Enlaza con los datos de la interfaz
-    private void bindUI() {
+    private void findViewItems() {
         textEmail = findViewById(R.id.textEmail);
         textPass = findViewById(R.id.textPass);
         switchRemember = findViewById(R.id.switchRemember);
@@ -79,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister = findViewById(R.id.buttonRegister);
         btnOut = findViewById(R.id.buttonOut);
     }
+
     // Si es swith de recordar está activado guardara los datos de sesión
     private void saveOnPreferences(String email, String password) {
         if (switchRemember.isChecked()) {
@@ -91,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
     // valida que el formato sea de email y la contraseña mayor a 4 digitos
-    private boolean logIn(String email, String password) {
+    private boolean verify(String email, String password) {
         if (!isValidEmail(email)) {
             Toast.makeText(this, "Email invalido, por favor intenta otra vez", Toast.LENGTH_SHORT).show();
             return false;
@@ -103,15 +115,33 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // Verifica los datos con Firebase para el Inicio de Sesion
+    private void logIn(){
+        loading.setMessage("Iniciando Sesión");
+        loading.show();
+        service.getReferenceAuth().signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful())
+                            goToHome();
+                        else
+                            Toast.makeText(LoginActivity.this, "Verifique los datos", Toast.LENGTH_SHORT).show();
+                        loading.dismiss();
+                    }
+                });
+    }
+
+    // Verifica que el correo no este vacio y tenga formato de email
     private boolean isValidEmail(String email) {
-        // Que no este vacio y tenga formato de email
         return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    // Verifica que la contraseña tenga longitud mayor o igual a 6
     private boolean isValidPassword(String password) {
-        // Que la longitud sea mayor a 4
         return password.length() >= 6;
     }
+
     // Manejo de flag para redirigir al Home de la app
     private void goToHome() {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);

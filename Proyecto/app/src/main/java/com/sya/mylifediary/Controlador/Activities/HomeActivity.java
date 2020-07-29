@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
+import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
@@ -19,8 +21,9 @@ import com.sya.mylifediary.R;
 *  usa sharedPreferences para datos de sesion y un acelerometro */
 public class HomeActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
-    public Button btnAdd, btnList, btnReceive, btnChat;
-    public Acelerometro acelerometro;
+    private Button btnAdd, btnList, btnReceive, btnChat;
+    private Acelerometro acelerometro;
+    private FirebaseService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +35,10 @@ public class HomeActivity extends AppCompatActivity {
         // Busca el ya creado en el login por el mismo nombre string
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
-
         findViewItems();
+
+        service = new FirebaseService();    // instancia para servicio de Firebase
+        setTitle(service.getReferenceAuth().getCurrentUser().getEmail());
         implementListeners();
     }
 
@@ -112,6 +117,8 @@ public class HomeActivity extends AppCompatActivity {
     // Metodo para Cerrar Sesion del Usuario, borra las sharedPreferences existentes
     private void logOut() {
         Util.removeSharedPreferences(sharedPreferences);
+        service.getReferenceAuth().signOut();
+        Toast.makeText(this, "Sesión cerrada Exitosamente", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
