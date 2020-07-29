@@ -5,14 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import com.github.johnpersano.supertoasts.library.Style;
+import com.github.johnpersano.supertoasts.library.SuperActivityToast;
+import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
+import com.sya.mylifediary.Controlador.Utils.PopupInfoActivity;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
@@ -36,9 +41,7 @@ public class HomeActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
-
         service = new FirebaseService();    // instancia para servicio de Firebase
-        setTitle(service.getReferenceAuth().getCurrentUser().getEmail());
         implementListeners();
     }
 
@@ -106,6 +109,12 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_email:
+                showUser();
+                return true;
+            case R.id.menu_about:
+                showInfo();
+                return true;
             case R.id.menu_logout:
                 logOut();
                 return true;
@@ -122,5 +131,21 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+    }
+
+    // Mostrar el correo del usuario actual logeado
+    private void showUser(){
+        String email = service.getReferenceAuth().getCurrentUser().getEmail();
+        SuperActivityToast.create(this, new Style(), Style.TYPE_STANDARD)
+                .setText("Logeado como: " + email) // MENSAJE MORADO
+                .setDuration(Style.DURATION_VERY_LONG)
+                .setFrame(Style.FRAME_LOLLIPOP)
+                .setColor(PaletteUtils.getSolidColor(PaletteUtils.MATERIAL_PINK))
+                .setAnimations(Style.ANIMATIONS_POP).show();
+    }
+
+    // Mostrar un Popup de la información de la Aplicación y desarrolladores
+    private void showInfo(){
+        startActivity(new Intent(HomeActivity.this, PopupInfoActivity.class));
     }
 }

@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">My Life Diary</string>
+    <string name="app_authors">Autores:</string>
+    <string name="app_author1">Marisol Pérez Lima</string>
+    <string name="app_author2">Erick Andy Laura Barrios</string>
+    <string name="app_developed">Desarrollado en 2020</string>
+    <string name="app_contact">Contacto:</string>
+    <string name="app_email1">mperezl@unsa.edu.pe</string>
+    <string name="app_email2">elauraba@unsa.edu.pe</string>
+    <string name="app_rights">Todos los derechos Reservados.</string>
 </resources>
