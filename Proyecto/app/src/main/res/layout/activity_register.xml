@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:hint="Correo Electronico"
-        android:inputType="textPersonName"
+        android:inputType="textEmailAddress"
         app:layout_constraintTop_toBottomOf="@+id/view_reg_nom"
         tools:layout_editor_absoluteX="20dp"
         android:textColor="@color/colorBlack"

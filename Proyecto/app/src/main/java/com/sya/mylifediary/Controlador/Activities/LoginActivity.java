@@ -96,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Email invalido, por favor intenta otra vez", Toast.LENGTH_SHORT).show();
             return false;
         } else if (!isValidPassword(password)) {
-            Toast.makeText(this, "Password invalido, ingrese al menos 4 caracteres", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Password invalido, ingrese al menos 6 caracteres", Toast.LENGTH_SHORT).show();
             return false;
         } else {
             return true;
@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean isValidPassword(String password) {
         // Que la longitud sea mayor a 4
-        return password.length() >= 4;
+        return password.length() >= 6;
     }
     // Manejo de flag para redirigir al Home de la app
     private void goToHome() {

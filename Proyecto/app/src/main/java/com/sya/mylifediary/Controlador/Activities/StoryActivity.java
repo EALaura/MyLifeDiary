@@ -76,8 +76,9 @@ public class StoryActivity extends AppCompatActivity {
         checkLocationPermission();  // Verifica los permisos de ubicación
         findViewItems();
         loading = new ProgressDialog(this);
+        loading.setCancelable(false);
         story = new Story();
-        service = new FirebaseService();
+        service = new FirebaseService();    // instancia para servicio de Firebase
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
@@ -178,7 +179,7 @@ public class StoryActivity extends AppCompatActivity {
                 Uri downloadUri = uriTask.getResult();
                 story.setImageAddress(downloadUri.toString());
                 // insertar en firebase
-                service.save(story);
+                service.saveStory(story);
                 loading.dismiss();
                 Toast.makeText(StoryActivity.this, "Guardado Exitosamente!", Toast.LENGTH_SHORT).show();
                 startActivity(intent);

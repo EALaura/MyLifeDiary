@@ -2,39 +2,42 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
 import com.sya.mylifediary.Model.User;
 import com.sya.mylifediary.R;
 
 /* Es la Activity para el registro del usuario */
 public class RegisterActivity extends AppCompatActivity {
-    public Button btnRegister;
-    public Button btnCancel;
+    private Button btnRegister;
+    private Button btnCancel;
     private EditText username, name, email, password1, password2;
-    // Variables de Firebase
-    private FirebaseDatabase database;
-    private DatabaseReference ref;
-    User user;
+    private String username_, name_, email_, password1_, password2_;
+    private FirebaseService service;
+    private ProgressDialog loading;
+    private Intent intent;
+    private User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         findViewItems();
-
-        // inicializa el servicio de Firebase
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("User");
+        loading = new ProgressDialog(this);
+        loading.setCancelable(false);
+        service = new FirebaseService();    // instancia para servicio de Firebase
+        intent = new Intent(RegisterActivity.this, LoginActivity.class);
         user = new User();
         implementListeners();
     }
@@ -50,33 +53,14 @@ public class RegisterActivity extends AppCompatActivity {
         password2 = findViewById(R.id.view_reg_rpass);
     }
 
-    // Obtener valores
-    private void getValues(){
-        user.setUsername(username.getText().toString());
-        user.setName(name.getText().toString());
-        user.setEmail(email.getText().toString());
-        user.setPassword1(password1.getText().toString());
-        user.setPassword2(password2.getText().toString());
-    }
-
     private void implementListeners() {
-        // Cuando se registre se le redirige al login de la aplicación
-        final Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        // Cuando se registre o se cancele se le redirige al login de la aplicación
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ref.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        getValues();
-                        ref.child(user.getUsername()).setValue(user);
-                        Toast.makeText(RegisterActivity.this, "Usuario Registrado exitosamente, Inicie Sesión", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {}
-                });
-                startActivity(intent);
+                getValues();
+                if (validateFields())
+                    saveUser();
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -85,5 +69,64 @@ public class RegisterActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    // Obtener valores
+    private void getValues() {
+        username_ = username.getText().toString();
+        name_ = name.getText().toString();
+        email_ = email.getText().toString();
+        password1_ = password1.getText().toString();
+        password2_ = password2.getText().toString();
+    }
+
+    // Valida todos los datos
+    private boolean validateFields() {
+        if (username_.isEmpty() || name_.isEmpty() || email_.isEmpty() ||
+                password1_.isEmpty() || password2_.isEmpty()) {
+            Toast.makeText(this, "No pueden haber campos vacíos", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (password1_.length() < 6 || password2_.length() < 6) {
+            Toast.makeText(this, "La contraseña debe tener 6 digitos", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!password1_.equals(password2_)) {
+            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // Guarda al nuevo usuario
+    private void saveUser() {
+        loading.setMessage("Guardando Usuario");
+        loading.show();
+        service.getReferenceAuth().createUserWithEmailAndPassword(email_, password1_)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            User user = new User();
+                            setData(user);
+                            service.saveUser(user);
+                            loading.dismiss();
+                            Toast.makeText(RegisterActivity.this, "Registrado Exitosamente!", Toast.LENGTH_SHORT).show();
+                            startActivity(intent);
+                        } else {
+                            if (task.getException() instanceof FirebaseAuthUserCollisionException)
+                                Toast.makeText(RegisterActivity.this, "El usuario ya existe", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    // Llenar el modelo User con los datos validados
+    public void setData(User user) {
+        user.setUsername(username_);
+        user.setName(name_);
+        user.setEmail(email_);
+        user.setPassword(password1_);
     }
 }
