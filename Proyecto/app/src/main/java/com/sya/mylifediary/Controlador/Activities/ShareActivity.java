@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ import java.util.Set;
 import java.util.UUID;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
+import com.sya.mylifediary.Controlador.Services.LightSensor.LightSensor;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
@@ -39,6 +41,8 @@ import com.sya.mylifediary.R;
 public class ShareActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     public Acelerometro acelerometro;
+    private LightSensor lightSensor;
+    private LinearLayout shareView;
     public Button listDevices, send;
     public ListView listView;
     public TextView status;
@@ -61,8 +65,9 @@ public class ShareActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         // datos de sharedPreferences para la sesion y acelerometro
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
-        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
+        acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
+        lightSensor = new LightSensor(this, shareView); // Se agrega el sensor de Luz
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Si el bluetooth esta desactivado se le pide que active
@@ -86,17 +91,20 @@ public class ShareActivity extends AppCompatActivity {
         listView = findViewById(R.id.listDevices);
         canvas = findViewById(R.id.image);
         status = findViewById(R.id.txtstatus);
+        shareView = findViewById(R.id.shareView);
     }
-    // Cuando la activity esta en background se detienen las lecturas del acelerometro
+    // Cuando la activity esta en background se detienen las lecturas de los Sensores
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
+        lightSensor.getSensorManager().unregisterListener(lightSensor);
         super.onPause();
     }
     // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
         acelerometro.iniciarSensor();
+        lightSensor.iniciarSensor();
         super.onRestart();
     }
 
