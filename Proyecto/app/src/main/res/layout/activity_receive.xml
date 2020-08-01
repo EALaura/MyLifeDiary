@@ -2,34 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/reciView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
     android:orientation="vertical"
+    android:padding="20dp"
     tools:context=".Controlador.Activities.ReceiveActivity">
 
     <TextView
-        android:text="Recibir Historia"
-        android:textSize="30dp"
-        android:gravity="center"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:layout_height="wrap_content"/>
+        android:gravity="center"
+        android:text="Recibir Historia"
+        android:textSize="30dp" />
 
     <ImageView
         android:id="@+id/image"
-        android:layout_gravity="center"
-        android:scaleType="fitXY"
+        android:layout_width="200dp"
         android:layout_height="300dp"
+        android:layout_gravity="center"
         android:layout_marginBottom="20dp"
-        android:src="@drawable/back_image"
-        android:layout_width="200dp"/>
+        android:scaleType="fitXY"
+        android:src="@drawable/back_image" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
         android:background="@drawable/shape"
         android:backgroundTint="#ffd6bb"
         android:orientation="horizontal">
@@ -62,24 +63,24 @@
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:textSize="15dp"
-            android:textColor="@color/colorWhite"
             android:layout_marginRight="20dp"
             android:backgroundTint="#ef9a9a"
-            android:text="Escuchar" />
+            android:gravity="center"
+            android:text="Escuchar"
+            android:textColor="@color/colorWhite"
+            android:textSize="15dp" />
 
         <Button
             android:id="@+id/buttonDownload"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:textColor="@color/colorWhite"
-            android:textSize="15dp"
-            android:enabled="false"
             android:backgroundTint="@android:color/darker_gray"
-            android:text="Descargar" />
+            android:enabled="false"
+            android:gravity="center"
+            android:text="Descargar"
+            android:textColor="@color/colorWhite"
+            android:textSize="15dp" />
     </LinearLayout>
 
 </LinearLayout>

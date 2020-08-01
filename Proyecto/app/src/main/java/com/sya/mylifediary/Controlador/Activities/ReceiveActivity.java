@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
 import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -25,8 +26,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,23 +38,27 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
+
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.SendReceiveImage;
 import com.sya.mylifediary.Controlador.Services.Bluetooth.ServerClassImage;
+import com.sya.mylifediary.Controlador.Services.LightSensor.LightSensor;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
 /* Es la Activity que recibirá la imagen de la Historia que otro dispositivo
-*  le comparte por medio de Bluetooth, la imagen previa será reemplaza por la historia cuando
-*  se reciba, el proceso de envio demora aproximadamente un minuto */
+ *  le comparte por medio de Bluetooth, la imagen previa será reemplaza por la historia cuando
+ *  se reciba, el proceso de envio demora aproximadamente un minuto */
 public class ReceiveActivity extends AppCompatActivity {
     public Acelerometro acelerometro;
+    public LightSensor lightSensor;
     private SharedPreferences sharedPreferences;
     public Button listen, download;
     public TextView status;
     public ImageView canvas;
     public BluetoothAdapter bluetoothAdapter;
     public SendReceiveImage sendReceive;
+    public LinearLayout reciView;
     // variables para el Handler
     static final int STATE_CONNECTING = 2;
     static final int STATE_CONNECTED = 3;
@@ -66,6 +73,7 @@ public class ReceiveActivity extends AppCompatActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,6 +83,8 @@ public class ReceiveActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
+        //Se agrega sensor de Luz
+        lightSensor = new LightSensor(this, reciView);
 
         // Permisos de lectura y escritura
         verifyStoragePermissions(this);
@@ -102,7 +112,7 @@ public class ReceiveActivity extends AppCompatActivity {
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BitmapDrawable drawable = (BitmapDrawable)canvas.getDrawable();
+                BitmapDrawable drawable = (BitmapDrawable) canvas.getDrawable();
                 Bitmap bitmap = drawable.getBitmap();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
@@ -118,17 +128,22 @@ public class ReceiveActivity extends AppCompatActivity {
         download = findViewById(R.id.buttonDownload);
         canvas = findViewById(R.id.image);
         status = findViewById(R.id.txtstatus);
+        reciView = findViewById(R.id.reciView);
     }
+
     // Cuando la activity esta en background se detienen las lecturas del acelerometro
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
+        lightSensor.getSensorManager().unregisterListener(lightSensor);
         super.onPause();
     }
+
     // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
         acelerometro.iniciarSensor();
+        lightSensor.iniciarSensor();
         super.onRestart();
     }
 
@@ -140,28 +155,29 @@ public class ReceiveActivity extends AppCompatActivity {
             // Crear Fichero
             File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "/My Life Diary/");
             //Verifica si el directorio esta creado
-            if(!path.exists()){
+            if (!path.exists()) {
                 path.mkdirs();
             }
             // Se pone como nombre de la foto la fecha y hora actual para que sea único
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
             String imageFileName = timeStamp + ".jpg";
             File outputFile = new File(path, imageFileName);
-            String imagePath =  outputFile.getAbsolutePath();
+            String imagePath = outputFile.getAbsolutePath();
 
             //Escanea la imagen para mostrarla en album
             MediaScannerConnection.scanFile(this,
-                    new String[] { imagePath }, null,
+                    new String[]{imagePath}, null,
                     new MediaScannerConnection.OnScanCompletedListener() {
                         @Override
-                        public void onScanCompleted(String path, Uri uri) {  }
+                        public void onScanCompleted(String path, Uri uri) {
+                        }
                     });
             Toast.makeText(getApplicationContext(), "Imagen Guardada!", Toast.LENGTH_SHORT).show();
             outStream = new FileOutputStream(outputFile);
             outStream.write(byteArray);
             outStream.close();
             startActivity(new Intent(ReceiveActivity.this, HomeActivity.class));
-        // Mostrar errores al guardar la imagen
+            // Mostrar errores al guardar la imagen
         } catch (FileNotFoundException e) {
             Log.e("Error", "File Not Found", e);
         } catch (IOException e) {
