@@ -22,7 +22,7 @@ public class LightSensor implements SensorEventListener {
     }
 
     // Inicia el Sensor de Luz
-    private void iniciarSensor() {
+    public void iniciarSensor() {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         sensorLuz = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
         sensorManager.registerListener(this, sensorLuz, SensorManager.SENSOR_DELAY_NORMAL);
@@ -46,5 +46,10 @@ public class LightSensor implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
+    }
+
+    // Devuelve el sensorManager
+    public SensorManager getSensorManager() {
+        return sensorManager;
     }
 }

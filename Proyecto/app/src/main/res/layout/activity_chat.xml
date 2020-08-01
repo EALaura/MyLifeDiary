@@ -2,32 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chatView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
     android:orientation="vertical"
+    android:padding="20dp"
     tools:context=".Controlador.Activities.ChatActivity">
 
     <TextView
-        android:text="Chat Bluetooth"
-        android:textSize="30dp"
-        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Chat Bluetooth"
+        android:textSize="30dp" />
 
     <ScrollView
         android:id="@+id/ScrollView01"
         android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/back_chat"
-        android:layout_height="200dp">
+        android:background="@drawable/back_chat">
+
         <TextView
-            android:layout_margin="10dp"
             android:id="@+id/canvas"
-            android:textSize="20dp"
-            android:textColor="@color/colorBlack"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_margin="10dp"
+            android:textColor="@color/colorBlack"
+            android:textSize="20dp" />
     </ScrollView>
 
     <LinearLayout
@@ -47,22 +49,22 @@
 
         <Button
             android:id="@+id/buttonSend"
-            android:textColor="@android:color/white"
-            android:textSize="15dp"
-            android:enabled="false"
-            android:backgroundTint="@android:color/darker_gray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
-            android:text="Enviar" />
+            android:backgroundTint="@android:color/darker_gray"
+            android:enabled="false"
+            android:text="Enviar"
+            android:textColor="@android:color/white"
+            android:textSize="15dp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_gravity="center"
+        android:layout_margin="10dp"
         android:background="@drawable/shape"
         android:backgroundTint="#ffd6bb"
         android:orientation="horizontal">
@@ -93,29 +95,29 @@
             android:id="@+id/buttonListen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="15dp"
-            android:backgroundTint="#ef9a9a"
             android:layout_marginHorizontal="5dp"
             android:layout_weight="1"
-            android:text="Escuchar" />
+            android:backgroundTint="#ef9a9a"
+            android:text="Escuchar"
+            android:textColor="@android:color/white"
+            android:textSize="15dp" />
 
         <Button
             android:id="@+id/buttonDevices"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="15dp"
-            android:backgroundTint="#ef9a9a"
             android:layout_marginHorizontal="5dp"
             android:layout_weight="1"
-            android:text="Lista de Dispositivos" />
+            android:backgroundTint="#ef9a9a"
+            android:text="Lista de Dispositivos"
+            android:textColor="@android:color/white"
+            android:textSize="15dp" />
     </LinearLayout>
 
     <ListView
         android:id="@+id/listDevices"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:background="#fcd6cc"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="#fcd6cc" />
 </LinearLayout>
