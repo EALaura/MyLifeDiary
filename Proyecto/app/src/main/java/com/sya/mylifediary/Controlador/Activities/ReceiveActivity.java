@@ -131,7 +131,7 @@ public class ReceiveActivity extends AppCompatActivity {
         reciView = findViewById(R.id.reciView);
     }
 
-    // Cuando la activity esta en background se detienen las lecturas del acelerometro
+    // Cuando la activity esta en background se detienen las lecturas de los sensores
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);

@@ -2,18 +2,22 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
+import com.sya.mylifediary.Controlador.Services.LightSensor.LightSensor;
 import com.sya.mylifediary.Model.User;
 import com.sya.mylifediary.R;
 
@@ -21,12 +25,15 @@ import com.sya.mylifediary.R;
 public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private Button btnCancel;
+    private LinearLayout regiView;
     private EditText username, name, email, password1, password2;
     private String username_, name_, email_, password1_, password2_;
     private FirebaseService service;
     private ProgressDialog loading;
     private Intent intent;
     private User user;
+    //Sensor de Luz
+    private LightSensor lightSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         findViewItems();
+        lightSensor = new LightSensor(this, regiView);
         loading = new ProgressDialog(this);
         loading.setCancelable(false);
         service = new FirebaseService();    // instancia para servicio de Firebase
@@ -51,6 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
         email = findViewById(R.id.view_reg_corr);
         password1 = findViewById(R.id.view_reg_pass);
         password2 = findViewById(R.id.view_reg_rpass);
+        regiView = findViewById(R.id.regiView);
     }
 
     private void implementListeners() {
@@ -117,7 +126,7 @@ public class RegisterActivity extends AppCompatActivity {
                         } else {
                             if (task.getException() instanceof FirebaseAuthUserCollisionException)
                                 loading.dismiss();
-                                Toast.makeText(RegisterActivity.this, "El usuario ya existe", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "El usuario ya existe", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -129,5 +138,19 @@ public class RegisterActivity extends AppCompatActivity {
         user.setName(name_);
         user.setEmail(email_);
         user.setPassword(password1_);
+    }
+
+    // Cuando la activity esta en background se detienen las lecturas de los sensores
+    @Override
+    protected void onPause() {
+        lightSensor.getSensorManager().unregisterListener(lightSensor);
+        super.onPause();
+    }
+
+    // Cuando el activity se retoma se retoman las lecturas
+    @Override
+    protected void onRestart() {
+        lightSensor.iniciarSensor();
+        super.onRestart();
     }
 }
