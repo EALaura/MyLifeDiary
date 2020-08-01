@@ -1,71 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/homeView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/back_home"
-    tools:context=".Controlador.Activities.HomeActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".Controlador.Activities.HomeActivity">
 
     <Button
         android:id="@+id/buttonAdd"
-        android:layout_gravity="center"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"
+        android:backgroundTint="#ef9a9a"
         android:drawableLeft="@drawable/ic_add"
         android:drawablePadding="8dp"
-        android:textColor="@color/colorWhite"
-        android:layout_marginTop="50dp"
-        android:textSize="15dp"
-        android:backgroundTint="#ef9a9a"
         android:text="Agregar Historia"
-        android:layout_centerVertical="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp" />
 
     <Button
         android:id="@+id/buttonList"
-        android:layout_gravity="center"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:backgroundTint="#ef9a9a"
         android:drawableLeft="@drawable/ic_list"
         android:drawablePadding="8dp"
-        android:textColor="@color/colorWhite"
-        android:textSize="15dp"
-        android:backgroundTint="#ef9a9a"
         android:text="Ver Historias"
-        android:layout_centerVertical="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp" />
 
     <Button
         android:id="@+id/buttonReceive"
-        android:layout_gravity="center"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:backgroundTint="#ef9a9a"
         android:drawableLeft="@drawable/ic_down"
         android:drawablePadding="8dp"
-        android:textColor="@color/colorWhite"
-        android:textSize="15dp"
-        android:backgroundTint="#ef9a9a"
         android:text="Recibir Historia"
-        android:layout_centerVertical="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp" />
 
     <Button
         android:id="@+id/buttonChat"
-        android:layout_gravity="center"
         android:layout_width="230dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:backgroundTint="#ef9a9a"
         android:drawableLeft="@drawable/ic_chat"
         android:drawablePadding="8dp"
-        android:textColor="@color/colorWhite"
-        android:textSize="15dp"
-        android:backgroundTint="#ef9a9a"
         android:text="Iniciar Chat"
-        android:layout_centerVertical="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp" />
 
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,24 +11,30 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
 import com.github.johnpersano.supertoasts.library.Style;
 import com.github.johnpersano.supertoasts.library.SuperActivityToast;
 import com.github.johnpersano.supertoasts.library.utils.PaletteUtils;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
+import com.sya.mylifediary.Controlador.Services.LightSensor.LightSensor;
 import com.sya.mylifediary.Controlador.Utils.PopupInfoActivity;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.R;
 
 /* Es la primera actividad que se muestra despues del logeo,
-*  Muestra los botones para las demás funciones de la aplicación,
-*  usa sharedPreferences para datos de sesion y un acelerometro */
+ *  Muestra los botones para las demás funciones de la aplicación,
+ *  usa sharedPreferences para datos de sesion y un acelerometro */
 public class HomeActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private Button btnAdd, btnList, btnReceive, btnChat;
     private Acelerometro acelerometro;
     private FirebaseService service;
+    //Interfaz
+    private LinearLayout homeView;
+    private LightSensor lightSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +48,10 @@ public class HomeActivity extends AppCompatActivity {
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
         findViewItems();
         service = new FirebaseService();    // instancia para servicio de Firebase
+        //Light Sensor
+        lightSensor = new LightSensor(this, homeView);
         implementListeners();
-    }
+   }
 
     //Funcionalidades de los botones
     private void implementListeners() {
@@ -85,25 +94,32 @@ public class HomeActivity extends AppCompatActivity {
         btnList = findViewById(R.id.buttonList);
         btnReceive = findViewById(R.id.buttonReceive);
         btnChat = findViewById(R.id.buttonChat);
+        homeView = findViewById(R.id.homeView);
     }
+
     // Cuando la activity esta en background se detienen las lecturas del acelerometro
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
+        lightSensor.getSensorManager().unregisterListener(lightSensor);
         super.onPause();
     }
+
     // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
         acelerometro.iniciarSensor();
+        lightSensor.iniciarSensor();
         super.onRestart();
     }
+
     // Es la unica vista con el menu activado para Cerrar sesión
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
     // La opción de cerrar sesión:
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -133,7 +149,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // Mostrar el correo del usuario actual logeado
-    private void showUser(){
+    private void showUser() {
         String email = service.getReferenceAuth().getCurrentUser().getEmail();
         SuperActivityToast.create(this, new Style(), Style.TYPE_STANDARD)
                 .setText("Logeado como: " + email) // MENSAJE MORADO
@@ -144,7 +160,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     // Mostrar un Popup de la información de la Aplicación y desarrolladores
-    private void showInfo(){
+    private void showInfo() {
         startActivity(new Intent(HomeActivity.this, PopupInfoActivity.class));
     }
 }
