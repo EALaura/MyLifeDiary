@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
         //Light Sensor
         lightSensor = new LightSensor(this, homeView);
         implementListeners();
-   }
+    }
 
     //Funcionalidades de los botones
     private void implementListeners() {
@@ -133,6 +133,9 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.menu_logout:
                 logOut();
                 return true;
+            case R.id.menu_ayuda:
+                ayuda();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -162,5 +165,10 @@ public class HomeActivity extends AppCompatActivity {
     // Mostrar un Popup de la información de la Aplicación y desarrolladores
     private void showInfo() {
         startActivity(new Intent(HomeActivity.this, PopupInfoActivity.class));
+    }
+
+    // Envia al activity de Ayuda.
+    private void ayuda() {
+        Toast.makeText(getApplicationContext(),"AYUDA", Toast.LENGTH_SHORT).show();
     }
 }
