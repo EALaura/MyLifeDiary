@@ -14,12 +14,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
+import com.sya.mylifediary.Controlador.Services.LightSensor.LightSensor;
 import com.sya.mylifediary.R;
 
 /* Login Activity es la primera activity que se muestra al usuario por primera vez
@@ -33,6 +35,9 @@ public class LoginActivity extends AppCompatActivity {
     private String email, password;
     private FirebaseService service;
     private ProgressDialog loading;
+    //Interfaz
+    private LinearLayout linearLayout;
+    private LightSensor lightSensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +46,9 @@ public class LoginActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
         findViewItems();
+        // Control del Color de la interfaz
+        lightSensor = new LightSensor(this, linearLayout);
+
         // las preferencias privadas no se comparte con otras aplicaciones
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         service = new FirebaseService();    // instancia para servicio de Firebase
@@ -88,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.buttonLogin);
         btnRegister = findViewById(R.id.buttonRegister);
         btnOut = findViewById(R.id.buttonOut);
+        linearLayout = findViewById(R.id.loginView);
     }
 
     // Si es swith de recordar está activado guardara los datos de sesión
