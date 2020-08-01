@@ -3,6 +3,7 @@ package com.sya.mylifediary.Controlador.Activities;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.Manifest;
 import android.content.Intent;
@@ -24,30 +26,36 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.util.Log;
 import android.widget.Toast;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.UploadTask;
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.Firebase.FirebaseService;
+import com.sya.mylifediary.Controlador.Services.LightSensor.LightSensor;
 import com.sya.mylifediary.Controlador.Services.Location.LocationBroadcastReceiver;
 import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
+
 import java.io.File;
 
 /* Es la Activity para la creación de la historia, el usuario puede tomar una foto,
-*  añadir un titulo, una descripcion, la ubicación se obtiene por medio de
-*  LocationBroadcastReceiver que recibe la posicion exacta del usuario */
+ *  añadir un titulo, una descripcion, la ubicación se obtiene por medio de
+ *  LocationBroadcastReceiver que recibe la posicion exacta del usuario */
 public class StoryActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private Acelerometro acelerometro;
+    private LightSensor lightSensor;
     private static final String TAG = "MainActivity";
     private LocationBroadcastReceiver broadcastReceiver;
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 100;
+    private LinearLayout storyView;
     private TextView textAddress;
     private ImageView image;
     private EditText titleText, descriptionText;
@@ -61,6 +69,7 @@ public class StoryActivity extends AppCompatActivity {
     private FirebaseService service;
     private final int CODE_CAMERA = 0;
     private final int CODE_GALLARY = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,6 +125,7 @@ public class StoryActivity extends AppCompatActivity {
             }
         });
     }
+
     // Enlaza con la interfaz
     private void findViewItems() {
         textAddress = findViewById(R.id.textAddress);
@@ -125,10 +135,11 @@ public class StoryActivity extends AppCompatActivity {
         descriptionText = findViewById(R.id.txt_description);
         titleText = findViewById(R.id.textTitle);
         save = findViewById(R.id.buttonStory);
+        storyView = findViewById(R.id.storyView);
     }
 
     // Obtener valores de los campos
-    private void getValues(){
+    private void getValues() {
         story.setTitle(titleText.getText().toString());
         story.setLocation(textAddress.getText().toString());
         story.setDescription(descriptionText.getText().toString());
@@ -137,8 +148,8 @@ public class StoryActivity extends AppCompatActivity {
     }
 
     /* Cuando se guarda una historia, la imagen se guarda en la carpeta Storys_img en el storage
-    *  se recupera la url del storage para enlazar la imagen a la ruta ImageUrl del modelo Story
-    *  Finalmente se almacena la historia completa en database y se lanza la siguiente actividad */
+     *  se recupera la url del storage para enlazar la imagen a la ruta ImageUrl del modelo Story
+     *  Finalmente se almacena la historia completa en database y se lanza la siguiente actividad */
     private void saveStory() {
         loading.setTitle("Subiendo Historia");
         loading.setMessage("Espere por favor");
@@ -149,7 +160,7 @@ public class StoryActivity extends AppCompatActivity {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // procesar el archivo para el storage
                 Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                while(!uriTask.isSuccessful());
+                while (!uriTask.isSuccessful()) ;
                 Uri downloadUri = uriTask.getResult();
                 story.setImageAddress(downloadUri.toString());
                 // insertar en firebase
@@ -167,6 +178,7 @@ public class StoryActivity extends AppCompatActivity {
         super.onResume();
         sharedPreferences = getSharedPreferences("Preferences", Context.MODE_PRIVATE);
         acelerometro = new Acelerometro(this, sharedPreferences);   //Se agrega el acelerometro
+        lightSensor = new LightSensor(this, storyView); //Se agrega el sensor de Luz
         if (broadcastReceiver != null) {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(LocationManager.KEY_LOCATION_CHANGED);
@@ -176,18 +188,21 @@ public class StoryActivity extends AppCompatActivity {
         }
     }
 
-    /* Cuando la activity esta en background se detienen las lecturas del acelerometro
-       y del broadcast Receiver*/
+    /* Cuando la activity esta en background se detienen las lecturas del acelerometro,
+        sensor de Luz y del broadcast Receiver*/
     @Override
     protected void onPause() {
         acelerometro.getSensorManager().unregisterListener(acelerometro);
+        lightSensor.getSensorManager().unregisterListener(lightSensor);
         unregisterReceiver(broadcastReceiver);
         super.onPause();
     }
+
     // Cuando el activity se retoma se retoman las lecturas
     @Override
     protected void onRestart() {
         acelerometro.iniciarSensor();
+        lightSensor.iniciarSensor();
         super.onRestart();
     }
 
@@ -196,20 +211,20 @@ public class StoryActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
             case CODE_CAMERA:
                 bitmap = BitmapFactory.decodeFile(getApplicationContext().getExternalFilesDir(null) + "/story.jpg");
                 image.setImageBitmap(bitmap);
                 Util.enableButton(save, this);
                 break;
             case CODE_GALLARY:
-                if(data != null){   // Si el usuario prefiere sacar una foto
+                if (data != null) {   // Si el usuario prefiere sacar una foto
                     uriImg = data.getData();
-                    try{
+                    try {
                         bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), uriImg);
                         image.setImageBitmap(bitmap);
                         Util.enableButton(save, this);
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         Log.e("Error", "Exception", e);
                     }
                 }

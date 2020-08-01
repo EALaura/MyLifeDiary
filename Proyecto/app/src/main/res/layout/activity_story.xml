@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/storyView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,38 +11,39 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="My Life Diary"
         android:textSize="30dp"
-        android:layout_gravity="center"
         tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/photo"
         android:layout_width="170dp"
         android:layout_height="240dp"
-        android:scaleType="fitXY"
-        android:background="@drawable/back_image"
+        android:layout_gravity="center"
         android:layout_marginTop="5dp"
-        android:layout_gravity="center" />
+        android:background="@drawable/back_image"
+        android:scaleType="fitXY" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
         android:layout_gravity="center"
+        android:layout_margin="5dp"
         android:text="Ubicacion Actual:" />
 
     <TextView
         android:id="@+id/textAddress"
         android:layout_width="wrap_content"
-        android:gravity="center"
         android:layout_height="25dp"
+        android:layout_gravity="center"
         android:layout_marginHorizontal="15dp"
         android:background="@drawable/shape"
         android:backgroundTint="#ffd6bb"
-        android:layout_gravity="center"
+        android:gravity="center"
         android:text="" />
+
     <EditText
         android:id="@+id/textTitle"
         android:layout_width="match_parent"
@@ -56,12 +58,12 @@
         android:id="@+id/txt_description"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:gravity="top"
+        android:layout_marginHorizontal="20dp"
         android:background="@drawable/shape"
+        android:gravity="top"
         android:hint="Escribe tu Historia"
         android:inputType="textMultiLine"
         android:overScrollMode="always"
-        android:layout_marginHorizontal="20dp"
         android:padding="15dp"
         android:scrollbarStyle="insideInset"
         android:scrollbars="vertical" />
@@ -85,9 +87,9 @@
             android:id="@+id/btn_up"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:layout_gravity="center"
             android:background="@android:drawable/ic_menu_upload"
-            android:textColor="@color/colorWhite"
-            android:layout_gravity="center" />
+            android:textColor="@color/colorWhite" />
     </LinearLayout>
 
     <Button
@@ -95,10 +97,10 @@
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        android:textSize="15dp"
-        android:textColor="@color/colorWhite"
-        android:enabled="false"
         android:backgroundTint="@android:color/darker_gray"
-        android:text="Guardar Historia" />
+        android:enabled="false"
+        android:gravity="center"
+        android:text="Guardar Historia"
+        android:textColor="@color/colorWhite"
+        android:textSize="15dp" />
 </LinearLayout>
