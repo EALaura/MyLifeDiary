@@ -18,8 +18,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Controlador.Utils.PopupInfoActivity"
-            android:theme="@style/PopupTheme"></activity>
+        <activity android:name=".Controlador.Activities.HelpActivity"></activity>
+        <activity
+            android:name=".Controlador.Utils.PopupInfoActivity"
+            android:theme="@style/PopupTheme" />
         <activity
             android:name=".Controlador.Activities.ChatActivity"
             android:parentActivityName=".Controlador.Activities.HomeActivity">

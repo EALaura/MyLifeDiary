@@ -169,6 +169,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // Envia al activity de Ayuda.
     private void ayuda() {
-        Toast.makeText(getApplicationContext(),"AYUDA", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(HomeActivity.this, HelpActivity.class);
+        startActivity(intent);
     }
 }
