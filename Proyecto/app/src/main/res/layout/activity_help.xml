@@ -18,22 +18,13 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="250dp"
-                android:layout_height="300dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/back_home" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="10dp"
                 android:text="Ayuda Bluetooth"
-                android:textSize="20dp" />
+                android:textSize="25dp" />
 
 
             <TextView
@@ -45,31 +36,61 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="\n1. Habilitar los permisos de uso de bluetooth de los dispositivos X, Y." />
+            <ImageView
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:src="@drawable/help1"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="\n2. Presionar escuchar en el dispositivo X." />
+            <ImageView
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:src="@drawable/help2"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="\n3. Listar Dispositivos en el dispositivo Y." />
+            <ImageView
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:src="@drawable/help3"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="\n4. Seleccionar el dispositivo con el que desea conectarse (Y)." />
+            <ImageView
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:src="@drawable/help4"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="\n5. Esperar que el status de bluetooth indique Conectado (X, Y)." />
+            <ImageView
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:src="@drawable/help5"
+                android:layout_height="wrap_content"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="\n6. Ahora usted puede compartir sus historias, recibir historias y chatear por Bluetooth." />
+            <ImageView
+                android:adjustViewBounds="true"
+                android:layout_width="match_parent"
+                android:src="@drawable/help6"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 

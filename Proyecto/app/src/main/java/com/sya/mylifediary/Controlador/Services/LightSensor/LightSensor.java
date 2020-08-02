@@ -34,11 +34,12 @@ public class LightSensor implements SensorEventListener {
 
         if (sensorEvent.sensor.getType() == Sensor.TYPE_LIGHT) {
             //Menor Luz
-            if (sensorEvent.values[0] < 20) {
-                 // a menor luz
-                linearLayout.setBackgroundColor(Color.WHITE); // a mayor luz
+            if (sensorEvent.values[0] < 10) {
+                // a menor luz
+                linearLayout.setBackgroundColor(Color.rgb(154, 154, 154));
             } else {
-                linearLayout.setBackgroundColor(Color.rgb(154,154,154));
+                // a mayor luz
+                linearLayout.setBackgroundColor(Color.WHITE);
             }
         }
     }
