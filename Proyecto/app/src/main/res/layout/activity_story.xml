@@ -13,8 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="My Life Diary"
-        android:textSize="30dp"
-        tools:ignore="MissingConstraints" />
+        android:textSize="30dp"/>
 
     <ImageView
         android:id="@+id/photo"
