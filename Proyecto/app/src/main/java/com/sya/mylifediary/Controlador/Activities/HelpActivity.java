@@ -1,12 +1,10 @@
 package com.sya.mylifediary.Controlador.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.LinearLayout;
-
 import com.sya.mylifediary.Controlador.Services.Acelerometro.Acelerometro;
 import com.sya.mylifediary.Controlador.Services.LightSensor.LightSensor;
 import com.sya.mylifediary.R;

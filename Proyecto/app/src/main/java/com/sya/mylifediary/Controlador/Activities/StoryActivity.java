@@ -3,7 +3,6 @@ package com.sya.mylifediary.Controlador.Activities;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,11 +25,9 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.util.Log;
 import android.widget.Toast;
-
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.UploadTask;
@@ -42,7 +39,6 @@ import com.sya.mylifediary.Controlador.Services.Location.StoryActivityInf;
 import com.sya.mylifediary.Controlador.Utils.Util;
 import com.sya.mylifediary.Model.Story;
 import com.sya.mylifediary.R;
-
 import java.io.File;
 
 /* Es la Activity para la creación de la historia, el usuario puede tomar una foto,

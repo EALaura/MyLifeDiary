@@ -157,4 +157,18 @@ public class LoginActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
+    // Cuando la activity esta en background se detienen las lecturas de los sensores
+    @Override
+    protected void onPause() {
+        lightSensor.getSensorManager().unregisterListener(lightSensor);
+        super.onPause();
+    }
+
+    // Cuando el activity se retoma se retoman las lecturas
+    @Override
+    protected void onRestart() {
+        lightSensor.iniciarSensor();
+        super.onRestart();
+    }
 }
