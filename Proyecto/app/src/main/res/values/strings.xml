@@ -8,4 +8,15 @@
     <string name="app_email1">mperezl@unsa.edu.pe</string>
     <string name="app_email2">elauraba@unsa.edu.pe</string>
     <string name="app_rights">Todos los derechos Reservados.</string>
+    <string name="help_title">Ayuda Bluetooth</string>
+    <string name="help_nota">NOTA: Los siguientes pasos se aplican de la misma forma para compartir una historia o recibirla.</string>
+    <string name="help_1">\n1. Habilitar los permisos de uso de bluetooth de los dispositivos X, Y.</string>
+    <string name="help_2">\n2. Se ve la siguiente vista al iniciar el chat:</string>
+    <string name="help_3">\n3. En el dispositivo X se hace click en escuchar, y se desabilitarán los botones:</string>
+    <string name="help_4">\n4. En el dispositivo Y se hace click en Listar dispositivos, los botones también se desabilitan y se mostrará una lista de dispositivos para establecer conexión:</string>
+    <string name="help_5">\n5. Se selecciona el dispositivo a conectarse:</string>
+    <string name="help_6">\n6. Como el status está en conectado, se puede empezar con el chat:</string>
+
+
+
 </resources>
